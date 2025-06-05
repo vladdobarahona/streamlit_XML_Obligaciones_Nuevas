@@ -64,9 +64,6 @@ st.markdown(
 #xls_file = st.file_uploader("Sube tu archivo Excel", type=["xlsx", "xls"])
 xls_file = st.file_uploader("", type=["xlsx", "xls"])
 
-# Upload Excel file
-xls_file = st.file_uploader("Sube tu archivo Excel", type=["xlsx", "xls"])
-
 if xls_file:
     df = pd.read_excel(xls_file, engine='openpyxl')
     missing_columns = [col for col in required_columns if col not in df.columns]
