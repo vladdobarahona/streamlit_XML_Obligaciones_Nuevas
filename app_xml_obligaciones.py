@@ -101,231 +101,287 @@ if xls_file:
             st.write(f"Tipo de plan: {'Bullet' if tipo_plan == 1 else 'Cuotas capital simétricas'}")
 
             # Crear XML
-            try:
-                ET.register_namespace('', "http://www.finagro.com.co/sit")
-                obligaciones = ET.Element("{http://www.finagro.com.co/sit}obligaciones",
-                                          cifraDeControl=Cantidad_creditos,
-                                          cifraDeControlValor=Valor_creditos)
-                fecha_Desembolso = fecha_Desembolso_str.strftime('%Y-%m-%d')
-                fecha_Desembolso = date(2025, 5, 9) # indicar fecha desembolso
-                cod_programa = '126' # indicar código del programa
-                cod_intermediario = '203018' # indicar código del intermediario
-                print(tipo_plan)
-                tipo_plan = 0 # solo va 1 o cero | # si tipo_plan = 1 entonces bullet sino cuotas capital simétricas
+            obligaciones = ET.Element("{http://www.finagro.com.co/sit}obligaciones",
+                         cifraDeControl="1",
+                         cifraDeControlValor="10000000.00")
 
-                for index, row in df.iterrows():
-                    # Crear vencimiento final
-                    fechaFinal = pd.to_datetime(row['Fecha de Suscripción'],format ='%Y-%m-%d') + relativedelta(months=int(row['Plazo'])) 
-                    fechaFinal = fechaFinal.strftime('%Y-%m-%d')
-                    # Crear el elemento 'obligacion'
-                    obligacion = ET.SubElement(obligaciones, "{http://www.finagro.com.co/sit}obligacion",
-                                               tipoCartera= row['Tipo de Cartera'],
-                                               programaCredito = str(cod_programa),
-                                               tipoOperacion="1",
-                                               tipoMoneda="1",
-                                               tipoAgrupamiento="1",
-                                               numeroPagare= row['Número de Pagare'],
-                                               numeroObligacionIntermediario= row['Número de Pagare'],
-                                               fechaSuscripcion=str(row['Fecha de Suscripción'] ),
-                                               fechaDesembolso=str(fecha_Desembolso))
-                
-                    # Crear el elemento 'intermediario'
-                    intermediario = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}intermediario",
-                                                   oficinaPagare=str(row['Código Oficina']),
-                                                   oficinaObligacion=str(row['Código Oficina']),
-                                                   codigo=str(cod_intermediario))
-                
-                    # Crear el elemento 'beneficiarios'
-                    beneficiarios = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}beneficiarios",
-                                                   cantidad="1")
-                
-                    # Crear el elemento 'beneficiario'
-                    beneficiario = ET.SubElement(beneficiarios, "{http://www.finagro.com.co/sit}beneficiario",
-                                                 correoElectronico=str(row['Email Beneficiario']),
-                                                 tipoAgrupacion="1",
-                                                 tipoPersona="1",
-                                                 tipoProductor=str(row['Tipo de Productor']),
-                                                 actividadEconomica=str(row['Producto Relacionado']),
-                                                 cumpleCondicionesProductorAgrupacion="true")
-                
-                    # Crear el elemento 'identificacion' dentro de 'beneficiario'
-                    identificacion_beneficiario = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}identificacion",
-                                                                tipo="2",
-                                                                numeroIdentificacion=str(row['Numero de Identificacion']))
-                
-                    # Crear el elemento 'nombre' dentro de 'beneficiario'
-                    #calcular por espacios
-                    nombre_beneficiario = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}nombre",
-                                                       primerNombre=row['Nombre Razón Social'],
-                                                       segundoNombre="",
-                                                       primerApellido="",
-                                                       segundoApellido="",
-                                                       Razonsocial="")
-                
-                    # Crear el elemento 'nombre' dentro de 'beneficiario'
-                    direccionCorrespondencia = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}direccionCorrespondencia",
-                                                    direccion="R|"+str(row['Ubicación Predio']),
-                                                    municipio=str(row['Ciudad de Inversión']))
-                
-                    # Crear el elemento 'nombre' dentro de 'beneficiario'
-                    numeroTelefono = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}numeroTelefono",
-                                                   prefijo="6",
-                                                   numero=str(row['Teléfono Beneficiario']))
-                
-                    # Crear el elemento 'valorActivos' dentro de 'beneficiario'
-                    valor_activos = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}valorActivos",
-                                                    valor=str(row['Monto Activos']),
-                                                    fechaCorte=str(row['Fecha de Activos']),
-                                                    tipoDato=str(row['Moneda de Activos']))
-                
-                    # Crear el elemento 'valorIngresos' dentro de 'beneficiario'
-                    valor_ingresos = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}valorIngresos",
-                                                     valor=str(row['Valor Ingresos']),
-                                                     fechaCorte=str(row['Fecha de Ingresos']),
-                                                     tipoDato=str(row['Moneda Ingresos']))
-                
-                    # Crear el elemento 'proyecto'
-                    proyecto = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}proyecto",
-                                            fechaInicialEjecucion=str(fecha_Desembolso),
-                                            fechaFinalEjecucion=str(fechaFinal))
-                    # Se podrían agregar 'incentivo' y 'proyectosFinanciados' dentro de 'proyecto' si fuera necesario
-                
-                    # Crear el elemento 'predios'
-                    predios = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}predios")
-                
-                    # Crear un elemento 'predio' dentro de 'predios'
-                    predio = ET.SubElement(predios, "{http://www.finagro.com.co/sit}predio",
-                                           tipo="1",
-                                           municipio=row['Ciudad de Inversión'],
-                                           direccion="R|" +str(row['Ubicación Predio']))
-                
-                    #pendiente crear loop a partir de "Indicativo Fag"
-                    if row['Indicativo Fag'] == "S":
-                        # Crear el elemento 'garantiaFAG'
-                        garantiaFAG = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}garantiaFAG",
-                                                         tipoComision =str(row['Tipo Comisión']),
-                                                         porcentajeCobertura = str(row['Porcentaje Fag'])
-                                                         )
-                   
-                    
-                    # Crear el elemento 'destinosCredito'
-                    destinos_credito = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}destinosCredito")
-                
-                    # pendiente loop a partir de la cantida de destinos, solo hay hasta 4 destinos   
-                    # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
-                    destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
-                                                    codigo=str(row['Código Destino 1']),
-                                                    unidadesAFinanciar=str(row['Unidades Destino 1']),
-                                                    costoInversion=str(row['Costo Inversión 1']))
-                
-                    # Crear el elemento 'destinoCreditoValorAFinanciar' dentro de 'destinoCredito'
-                    destino_credito_valor = ET.SubElement(destino_credito, "{http://www.finagro.com.co/sit}destinoCreditoValorAFinanciar")
-                    valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar", {"xmlns": ""})
-                    valor_a_financiar.text=str(row['Valor a Financiar 1'])
-                    
-                    if not row['Código Destino 2']!= row['Código Destino 2']: 
-                        # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
-                        destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
-                                                        codigo=str(row['Código Destino 2']),
-                                                        unidadesAFinanciar=str(row['Unidades Destino 2']),
-                                                        costoInversion=str(row['Costo Inversión 2']))
-                
-                        # Crear el elemento 'destinoCreditoValorAFinanciar' dentro de 'destinoCredito'
-                        destino_credito_valor = ET.SubElement(destino_credito, "{http://www.finagro.com.co/sit}destinoCreditoValorAFinanciar")
-                        valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar", {"xmlns": ""})
-                        valor_a_financiar.text=str(row['Valor a Financiar 2'])
-                    
-                    if not row['Código Destino 3']!= row['Código Destino 3']: 
-                        # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
-                        destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
-                                                        codigo=str(row['Código Destino 3']),
-                                                        unidadesAFinanciar=str(row['Unidades Destino 3']),
-                                                        costoInversion=str(row['Costo Inversión 3']))
-                
-                        # Crear el elemento 'destinoCreditoValorAFinanciar' dentro de 'destinoCredito'
-                        destino_credito_valor = ET.SubElement(destino_credito, "{http://www.finagro.com.co/sit}destinoCreditoValorAFinanciar")
-                        valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar", {"xmlns": ""})
-                        valor_a_financiar.text=str(row['Valor a Financiar 3'])
-                    
-                    if not row['Código Destino 4']!= row['Código Destino 3']: 
-                        # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
-                        destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
-                                                        codigo=str(row['Código Destino 4']),
-                                                        unidadesAFinanciar=str(row['Unidades Destino 4']),
-                                                        costoInversion=str(row['Costo Inversión 4']))
-                
-                        # Crear el elemento 'destinoCreditoValorAFinanciar' dentro de 'destinoCredito'
-                        destino_credito_valor = ET.SubElement(destino_credito, "{http://www.finagro.com.co/sit}destinoCreditoValorAFinanciar")
-                        valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar", {"xmlns": ""})
-                        valor_a_financiar.text=str(row['Valor a Financiar 4'])
-                    
-                    # Crear el elemento 'financiacion'
-                    financiacion = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}financiacion",
-                                                   fechaVencimientoFinal=str(fechaFinal),
-                                                   plazoCredito=str(row['Plazo']),
-                                                   valorTotalCredito=str(row['Capital Total']),
-                                                   porcentaje="100",
-                                                   valorObligacion=str(row['Capital Total']))
-                
-                    # Datos para las cuotas
-                    datos_cuotas = []
-                    cantidad_cuotas= int(int(row['Plazo'])/int(row['Tipo Plan de Pagos']))
-                    cuota_capital = int(int(row['Capital Total'])/cantidad_cuotas)
-                    
-                    ult_cuota_capital = cuota_capital if int(row['Capital Total']) - (cantidad_cuotas*cuota_capital) == 0 else str(int(row['Capital Total']) - (Decimal(cantidad_cuotas-1)*Decimal(cuota_capital)))
-                    fHasta = pd.to_datetime(row['Fecha de Suscripción'],format ='%Y-%m-%d')
-                    for i in range(cantidad_cuotas-1):
-                        meses = int(row['Tipo Plan de Pagos'])
-                        fHasta = fHasta + relativedelta(months=meses)
-                        cuotas = {
-                                        "registro": str(i+1),
-                                        "fechaAplicacionHasta":str(date(int(fHasta.strftime('%Y')),int(fHasta.strftime('%m')),10)),
-                                        "conceptoRegistroCuota": "I" if tipo_plan == 1 else "K",
-                                        "periodicidadIntereses": "PE",
-                                        "periodicidadCapital": "" if tipo_plan == 1 else "PE",
-                                        "tasaBaseBeneficiario": "5",
-                                        "margenTasaBeneficiario": str(row['Puntos IBR']),
-                                        "valorCuotaCapital": "0" if tipo_plan == 1 else str(cuota_capital),
-                                        "porcentajeCapitalizacionIntereses": "0.0",
-                                        "margenTasaRedescuento": "0"
-                                        }
-                            
-                        datos_cuotas.append(cuotas)
-                    cuotas = {
-                                "registro": str(cantidad_cuotas),
-                                "fechaAplicacionHasta": str(fechaFinal),
-                                "conceptoRegistroCuota": "K",
-                                "periodicidadIntereses": "PE",
-                                "periodicidadCapital": "PE",
-                                "tasaBaseBeneficiario": "5",
-                                "margenTasaBeneficiario":  str(row['Puntos IBR']),
-                                "valorCuotaCapital": str(row['Capital Total']) if tipo_plan == 1 else str(ult_cuota_capital),
-                                "porcentajeCapitalizacionIntereses": "0.0",
-                                "margenTasaRedescuento": "0"
-                            }
-                         
-                    datos_cuotas.append(cuotas)
-                    # Crear el elemento 'planPagos'
-                    plan_pagos = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}planPagos")
-                
-                    # Iterar sobre los datos de las cuotas y crear un elemento 'registroCuota' para cada uno
-                    for dato_cuota in datos_cuotas:
-                        registro_cuota = ET.SubElement(plan_pagos, "{http://www.finagro.com.co/sit}registroCuota",
-                                                       registro=str(dato_cuota["registro"]),
-                                                       fechaAplicacionHasta=str(dato_cuota["fechaAplicacionHasta"]),
-                                                       conceptoRegistroCuota=dato_cuota["conceptoRegistroCuota"],
-                                                       periodicidadIntereses=dato_cuota["periodicidadIntereses"],
-                                                       periodicidadCapital=dato_cuota["periodicidadCapital"],
-                                                       tasaBaseBeneficiario=dato_cuota["tasaBaseBeneficiario"],
-                                                       margenTasaBeneficiario=dato_cuota["margenTasaBeneficiario"],
-                                                       valorCuotaCapital=dato_cuota.get("valorCuotaCapital"),  # Usamos .get() por si es opcional
-                                                       porcentajeCapitalizacionIntereses=dato_cuota.get("porcentajeCapitalizacionIntereses"),
-                                                       margenTasaRedescuento=dato_cuota.get("margenTasaRedescuento"),
-                                                      )
-                    
-                
-                # Crear el árbol XML
-                tree = ET.ElementTree(obligaciones)
+            # Crear el elemento 'obligacion'
+            obligacion = ET.SubElement(obligaciones, "{http://www.finagro.com.co/sit}obligacion",
+                                       tipoCartera="1",
+                                       programaCredito="126",
+                                       tipoOperacion="1",
+                                       tipoMoneda="1",
+                                       tipoAgrupamiento="1",
+                                       numeroPagare="00654526555245",
+                                       numeroObligacionIntermediario="24512521542",
+                                       fechaSuscripcion=str(date(2025, 5, 9)),
+                                       fechaDesembolso=str(date(2025, 5, 9)))
+            
+            # Crear el elemento 'intermediario'
+            intermediario = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}intermediario",
+                                           oficinaPagare="1",
+                                           oficinaObligacion="1",
+                                           codigo="203018")
+            
+            # Crear el elemento 'beneficiarios'
+            beneficiarios = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}beneficiarios",
+                                           cantidad="1")
+            
+            # Crear el elemento 'beneficiario'
+            beneficiario = ET.SubElement(beneficiarios, "{http://www.finagro.com.co/sit}beneficiario",
+                                         correoElectronico="beneficiario@finagro.com.co",
+                                         tipoAgrupacion="1",
+                                         tipoPersona="1",
+                                         tipoProductor="34",
+                                         actividadEconomica="245100",
+                                         cumpleCondicionesProductorAgrupacion="true")
+            
+            # Crear el elemento 'identificacion' dentro de 'beneficiario'
+            identificacion_beneficiario = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}identificacion",
+                                                        tipo="2",
+                                                        numeroIdentificacion="1001635950")
+            
+            # Se podría agregar 'negocioFiduciario' dentro de 'identificacion_beneficiario' si fuera necesario
+            
+            # Crear el elemento 'nombre' dentro de 'beneficiario'
+            nombre_beneficiario = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}nombre",
+                                               primerNombre="MONSALVE",
+                                               segundoNombre="TERRANO",
+                                               primerApellido="JORGE",
+                                               segundoApellido="ANDRES",
+                                               Razonsocial="")
+            
+            # Crear el elemento 'nombre' dentro de 'beneficiario'
+            direccionCorrespondencia = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}direccionCorrespondencia",
+                                            direccion="R|VEREDA LA CONCHA, CARNICEROS, FINCA EL CORTIJO",
+                                            municipio="63212")
+            
+            # Crear el elemento 'nombre' dentro de 'beneficiario'
+            numeroTelefono = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}numeroTelefono",
+                                           prefijo="6",
+                                           numero="3187729283")
+            
+            # Crear el elemento 'valorActivos' dentro de 'beneficiario'
+            valor_activos = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}valorActivos",
+                                            valor="10000000.00",
+                                            fechaCorte=str(date(2025, 2, 20)),
+                                            tipoDato="Declarado")
+            
+            # Crear el elemento 'valorIngresos' dentro de 'beneficiario'
+            valor_ingresos = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}valorIngresos",
+                                             valor="5000.00",
+                                             fechaCorte=str(date(2025, 2, 10)),
+                                             tipoDato="COP")
+            
+            # Crear el elemento 'proyecto'
+            proyecto = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}proyecto",
+                                    fechaInicialEjecucion=str(date(2025, 5, 9)),
+                                    fechaFinalEjecucion=str(date(2025, 6, 9)))
+            # Se podrían agregar 'incentivo' y 'proyectosFinanciados' dentro de 'proyecto' si fuera necesario
+            
+            # Crear el elemento 'predios'
+            predios = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}predios")
+            
+            # Crear un elemento 'predio' dentro de 'predios'
+            predio = ET.SubElement(predios, "{http://www.finagro.com.co/sit}predio",
+                                   tipo="1",
+                                   municipio="63212",
+                                   direccion="R|VEREDA LA CONCHA, CARNICEROS, FINCA EL CORTIJO")
+            
+            # Crear el elemento 'destinosCredito'
+            destinos_credito = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}destinosCredito")
+            
+            # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
+            destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
+                                            codigo="245100",
+                                            unidadesAFinanciar="10.0",
+                                            costoInversion="10000000")
+            
+            # Crear el elemento 'destinoCreditoValorAFinanciar' dentro de 'destinoCredito'
+            destino_credito_valor = ET.SubElement(destino_credito, "{http://www.finagro.com.co/sit}destinoCreditoValorAFinanciar")
+            valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar", {"xmlns": ""})
+            valor_a_financiar.text="10000000"
+            
+            # Crear el elemento 'financiacion'
+            financiacion = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}financiacion",
+                                           fechaVencimientoFinal=str(date(2025, 6, 9)),
+                                           plazoCredito="1",
+                                           valorTotalCredito="10000000",
+                                           porcentaje="100",
+                                           valorObligacion="10000000")
+            
+            # Datos de ejemplo para las cuotas
+            datos_cuotas = [
+                {
+                    "registro": 1,
+                    "fechaAplicacionHasta": date(2025, 6, 20),
+                    "conceptoRegistroCuota": "Pago Mensual",
+                    "tasaBaseBeneficiario": "IBR",
+                    "margenTasaBeneficiario": "2.5",
+                    "valorCuotaCapital": "500.00",
+                    "porcentajeCapitalizacionIntereses": "0.0",
+                    "margenTasaRedescuento": "1.0",
+                },
+                {
+                    "registro": 2,
+                    "fechaAplicacionHasta": date(2025, 7, 20),
+                    "conceptoRegistroCuota": "Pago Mensual",
+                    "tasaBaseBeneficiario": "IBR",
+                    "margenTasaBeneficiario": "2.5",
+                    "valorCuotaCapital": "500.00",
+                    "porcentajeCapitalizacionIntereses": "0.0",
+                    "margenTasaRedescuento": "1.0",
+                },
+                # Puedes agregar más diccionarios para más cuotas
+            ]
+            
+            # Crear el elemento 'planPagos'
+            plan_pagos = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}planPagos")
+            
+            # Iterar sobre los datos de las cuotas y crear un elemento 'registroCuota' para cada uno
+            for dato_cuota in datos_cuotas:
+                registro_cuota = ET.SubElement(plan_pagos, "{http://www.finagro.com.co/sit}registroCuota",
+                                               registro=str(dato_cuota["registro"]),
+                                               fechaAplicacionHasta=str(dato_cuota["fechaAplicacionHasta"]),
+                                               conceptoRegistroCuota=dato_cuota["conceptoRegistroCuota"],
+                                               tasaBaseBeneficiario=dato_cuota["tasaBaseBeneficiario"],
+                                               margenTasaBeneficiario=dato_cuota["margenTasaBeneficiario"],
+                                               valorCuotaCapital=dato_cuota.get("valorCuotaCapital"),  # Usamos .get() por si es opcional
+                                               porcentajeCapitalizacionIntereses=dato_cuota.get("porcentajeCapitalizacionIntereses"),
+                                               margenTasaRedescuento=dato_cuota.get("margenTasaRedescuento"),
+                                              )
+            
+            ############ Crear el elemento 'obligacion 2 ' #########################################################################################
+            obligacion = ET.SubElement(obligaciones, "{http://www.finagro.com.co/sit}obligacion",
+                                       tipoCartera="Comercial",
+                                       programaCredito="Desarrollo Rural",
+                                       tipoOperacion="Crédito",
+                                       tipoMoneda="COP",
+                                       tipoAgrupamiento="1",
+                                       numeroPagare="PAG001",
+                                       numeroObligacionIntermediario="OBI001",
+                                       fechaSuscripcion=str(date(2025, 5, 15)),
+                                       fechaDesembolso=str(date(2025, 5, 20)))
+            
+            # Crear el elemento 'intermediario'
+            intermediario = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}intermediario",
+                                           oficinaPagare="OF001",
+                                           oficinaObligacion="OFB001",
+                                           codigo="INT001")
+            
+            # Crear el elemento 'beneficiarios'
+            beneficiarios = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}beneficiarios",
+                                           cantidad="1")
+            
+            # Crear el elemento 'beneficiario'
+            beneficiario = ET.SubElement(beneficiarios, "{http://www.finagro.com.co/sit}beneficiario",
+                                         correoElectronico="beneficiario@example.com",
+                                         tipoAgrupacion="Individual",
+                                         tipoPersona="1",
+                                         tipoProductor="Pequeño",
+                                         cumpleCondicionesProductorAgrupacion="true",
+                                         actividadEconomica="Agricultura")
+            
+            # Crear el elemento 'identificacion' dentro de 'beneficiario'
+            identificacion_beneficiario = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}identificacion",
+                                                        tipo="CC",
+                                                        numeroIdentificacion="1234567890")
+            # Se podría agregar 'negocioFiduciario' dentro de 'identificacion_beneficiario' si fuera necesario
+            
+            # Crear el elemento 'nombre' dentro de 'beneficiario'
+            nombre_beneficiario = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}nombre",
+                                               primerNombre="Juan",
+                                               primerApellido="Pérez")
+            
+            # Crear el elemento 'valorActivos' dentro de 'beneficiario'
+            valor_activos = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}valorActivos",
+                                            valor="10000.00",
+                                            fechaCorte=str(date(2025, 5, 10)),
+                                            tipoDato="Declarado")
+            
+            # Crear el elemento 'valorIngresos' dentro de 'beneficiario'
+            valor_ingresos = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}valorIngresos",
+                                             valor="5000.00",
+                                             fechaCorte=str(date(2025, 5, 10)),
+                                             tipoDato="Declarado")
+            
+            # Crear el elemento 'proyecto'
+            proyecto = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}proyecto")
+            # Se podrían agregar 'incentivo' y 'proyectosFinanciados' dentro de 'proyecto' si fuera necesario
+            
+            # Crear el elemento 'predios'
+            predios = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}predios")
+            
+            # Crear un elemento 'predio' dentro de 'predios'
+            predio = ET.SubElement(predios, "{http://www.finagro.com.co/sit}predio",
+                                   tipo="1",
+                                   municipio="Bogotá",
+                                   direccion="Calle 1 # 2-3")
+            
+            # Crear el elemento 'destinosCredito'
+            destinos_credito = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}destinosCredito")
+            
+            # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
+            destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
+                                            codigo="DC001",
+                                            unidadesAFinanciar="10.0",
+                                            costoInversion="2000.00")
+            
+            # Crear el elemento 'destinoCreditoValorAFinanciar' dentro de 'destinoCredito'
+            destino_credito_valor = ET.SubElement(destino_credito, "{http://www.finagro.com.co/sit}destinoCreditoValorAFinanciar")
+            valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar")
+            valor_a_financiar.text = "1500.00"
+            
+            # Crear el elemento 'financiacion'
+            financiacion = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}financiacion",
+                                           fechaVencimientoFinal=str(date(2026, 5, 20)),
+                                           plazoCredito="12",
+                                           valorTotalCredito="10000.00",
+                                           valorObligacion="10000.00")
+            
+            # Datos de ejemplo para las cuotas
+            datos_cuotas = [
+                {
+                    "registro": 1,
+                    "fechaAplicacionHasta": date(2025, 6, 20),
+                    "conceptoRegistroCuota": "Pago Mensual",
+                    "tasaBaseBeneficiario": "IBR",
+                    "margenTasaBeneficiario": "2.5",
+                    "valorCuotaCapital": "500.00",
+                    "porcentajeCapitalizacionIntereses": "0.0",
+                    "margenTasaRedescuento": "1.0",
+                },
+                {
+                    "registro": 2,
+                    "fechaAplicacionHasta": date(2025, 7, 20),
+                    "conceptoRegistroCuota": "Pago Mensual",
+                    "tasaBaseBeneficiario": "IBR",
+                    "margenTasaBeneficiario": "2.5",
+                    "valorCuotaCapital": "500.00",
+                    "porcentajeCapitalizacionIntereses": "0.0",
+                    "margenTasaRedescuento": "1.0",
+                },
+                # Puedes agregar más diccionarios para más cuotas
+            ]
+            
+            # Crear el elemento 'planPagos'
+            plan_pagos = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}planPagos")
+            
+            # Iterar sobre los datos de las cuotas y crear un elemento 'registroCuota' para cada uno
+            for dato_cuota in datos_cuotas:
+                registro_cuota = ET.SubElement(plan_pagos, "{http://www.finagro.com.co/sit}registroCuota",
+                                               registro=str(dato_cuota["registro"]),
+                                               fechaAplicacionHasta=str(dato_cuota["fechaAplicacionHasta"]),
+                                               conceptoRegistroCuota=dato_cuota["conceptoRegistroCuota"],
+                                               tasaBaseBeneficiario=dato_cuota["tasaBaseBeneficiario"],
+                                               margenTasaBeneficiario=dato_cuota["margenTasaBeneficiario"],
+                                               valorCuotaCapital=dato_cuota.get("valorCuotaCapital"),  # Usamos .get() por si es opcional
+                                               porcentajeCapitalizacionIntereses=dato_cuota.get("porcentajeCapitalizacionIntereses"),
+                                               margenTasaRedescuento=dato_cuota.get("margenTasaRedescuento"),
+                                              )
+            
+            # Crear el árbol XML
+            tree = ET.ElementTree(obligaciones)
                 ET.indent(tree, space="  ", level=0)
         
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as tmp:
