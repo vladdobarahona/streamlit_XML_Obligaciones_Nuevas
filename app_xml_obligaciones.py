@@ -374,6 +374,6 @@ if xls_file:
     
             with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as tmp:
                         tree.write(tmp.name, encoding="UTF-8", xml_declaration=True)
-                        st.success("✅ XML generado exitosamente.")
+                        st.success("✅ XML de obligaciones nuevas generado exitosamente.")
                         with open(tmp.name, "rb") as f:
-                            st.download_button("📥 Descargar XML de Obligaciones Nuevas", f, file_name="Obligaciones.xml", mime="application/xml")
+                            st.download_button("📥 Descargar XML de Obligaciones nuevas", f, file_name="Obligaciones.xml", mime="application/xml")
