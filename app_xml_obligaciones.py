@@ -54,14 +54,13 @@ required_columns = [
     'Valor Ingresos', 'Fecha de Ingresos', 'Moneda Ingresos', 'Moneda de Activos'
 ]
 
-# Cargar Excel file
-#st.title("Validador de Columnas Requeridas")
+xls_file = st.file_uploader("", type=["xlsx", "xls"])
+
 st.markdown(
     '<span style="color: rgb(120, 154, 61); font-size: 44px;">Validador de Columnas Requeridas</span>',
     unsafe_allow_html=True
 )
 
-xls_file = st.file_uploader("", type=["xlsx", "xls"])
 
 if xls_file:
     df = pd.read_excel(xls_file, engine='openpyxl')
@@ -87,7 +86,7 @@ if xls_file:
 
         # Formulario de parámetros
         with st.form("form_parametros"):
-            fecha_Desembolso = st.date_input("Fecha de desembolso", value=date.today())
+            fecha_Desembolso_str = st.date_input("Fecha de desembolso", value=date.today())
             cod_programa = st.text_input("Código del programa", value="501")
             cod_intermediario = st.text_input("Código del intermediario", value="203018")
             tipo_plan_checkbox = st.checkbox("¿Es un plan de pagos tipo bullet?", key="tipo_plan_checkbox")
@@ -107,6 +106,7 @@ if xls_file:
                 obligaciones = ET.Element("{http://www.finagro.com.co/sit}obligaciones",
                                           cifraDeControl=Cantidad_creditos,
                                           cifraDeControlValor=Valor_creditos)
+                fecha_Desembolso = fecha_Desembolso_str.strftime('%Y-%m-%d')
 
                 for index, row in df.iterrows():
                     # Crear vencimiento final
