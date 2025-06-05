@@ -54,13 +54,11 @@ required_columns = [
     'Valor Ingresos', 'Fecha de Ingresos', 'Moneda Ingresos', 'Moneda de Activos'
 ]
 
-xls_file = st.file_uploader("", type=["xlsx", "xls"])
-st.header("Prueba", divider=True)
 st.markdown(
     '<span style="color: rgb(120, 154, 61); font-size: 22px;">Validador de Columnas Requeridas</span>',
     unsafe_allow_html=True
 )
-
+xls_file = st.file_uploader("", type=["xlsx", "xls"])
 
 if xls_file:
     df = pd.read_excel(xls_file, engine='openpyxl')
@@ -100,7 +98,7 @@ if xls_file:
             st.write(f"Código del programa: {cod_programa}")
             st.write(f"Código del intermediario: {cod_intermediario}")
             st.write(f"Tipo de plan: {'Bullet' if tipo_plan == 1 else 'Cuotas capital simétricas'}")
-        
+            st.header("Generar XML", divider=True)
             if st.button("Generar XML"):
                 try:
                     # XML generation logic here
