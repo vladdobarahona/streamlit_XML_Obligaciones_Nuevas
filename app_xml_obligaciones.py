@@ -96,7 +96,7 @@ if xls_file:
         if submitted:
            
             st.subheader("Resumen de datos ingresados:")
-            st.write(f"Fecha de desembolso: {fecha_Desembolso.strftime('%Y-%m-%d')}")
+            st.write(f"Fecha de desembolso: {fecha_Desembolso_str.strftime('%Y-%m-%d')}")
             st.write(f"Código del programa: {cod_programa}")
             st.write(f"Código del intermediario: {cod_intermediario}")
             st.write(f"Tipo de plan: {'Bullet' if tipo_plan == 1 else 'Cuotas capital simétricas'}")
