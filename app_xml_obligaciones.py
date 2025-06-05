@@ -53,8 +53,13 @@ required_columns = [
     'Valor Ingresos', 'Fecha de Ingresos', 'Moneda Ingresos', 'Moneda de Activos'
 ]
 
-# Upload Excel file
-st.title("Validador de Columnas Requeridas")
+# Cargar Excel file
+#st.title("Validador de Columnas Requeridas")
+st.markdown(
+    '<span style="color: rgb(120, 154, 61); font-size: 22px;">Validador de Columnas Requeridas</span>',
+    unsafe_allow_html=True
+)
+
 xls_file = st.file_uploader("Sube tu archivo Excel", type=["xlsx", "xls"])
 
 if xls_file:
