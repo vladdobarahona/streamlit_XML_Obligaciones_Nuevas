@@ -71,7 +71,7 @@ if xls_file:
         for col in missing_columns:
             st.markdown(f"- **{col}**")
     else:
-        st.success("✅ green[Todas las columnas requeridas están presentes.]")
+        st.success("✅ Todas las columnas requeridas están presentes.")
         df = df.dropna(subset=['Número de Pagare'])
         df['Fecha de Ingresos'] = pd.to_datetime(df['Fecha de Ingresos'], format='%Y/%m/%d')
         df['Fecha de Activos'] = pd.to_datetime(df['Fecha de Activos'], format='%Y%m%d')
@@ -95,7 +95,7 @@ if xls_file:
 
         if submitted:
            
-            st.subheader("blue[Resumen de datos ingresados:]")
+            st.subheader("Resumen de datos ingresados:")
             st.write(f"Fecha de desembolso: {fecha_Desembolso.strftime('%Y-%m-%d')}")
             st.write(f"Código del programa: {cod_programa}")
             st.write(f"Código del intermediario: {cod_intermediario}")
