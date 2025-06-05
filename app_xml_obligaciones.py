@@ -76,22 +76,23 @@ if xls_file:
     else:
         st.success("✅ Todas las columnas requeridas están presentes.")
         # Subida de archivos
-        xls_file = xls_file.dropna(subset='Número de Pagare')
-        xls_file['Fecha de Ingresos']= pd.to_datetime(xls_file['Fecha de Ingresos'], format='%Y/%m/%d')
-        xls_file['Fecha de Activos']= pd.to_datetime(xls_file['Fecha de Activos'], format='%Y%m%d')
-        xls_file['Fecha de Suscripción'] = pd.to_datetime(xls_file['Fecha de Suscripción'],format='%Y%m%d')
+        df = df.dropna(subset=['Número de Pagare'])
+        df['Fecha de Ingresos'] = pd.to_datetime(df['Fecha de Ingresos'], format='%Y/%m/%d')
+        df['Fecha de Activos'] = pd.to_datetime(df['Fecha de Activos'], format='%Y%m%d')
+        df['Fecha de Suscripción'] = pd.to_datetime(df['Fecha de Suscripción'], format='%Y%m%d')
         
-        xls_file['Fecha de Ingresos']= xls_file['Fecha de Ingresos'].dt.strftime('%Y-%m-%d')
-        xls_file['Fecha de Activos']= xls_file ['Fecha de Activos'].dt.strftime('%Y-%m-%d')
-        xls_file['Fecha de Suscripción'] = xls_file['Fecha de Suscripción'].dt.strftime('%Y-%m-%d')
+        df['Fecha de Ingresos'] = df['Fecha de Ingresos'].dt.strftime('%Y-%m-%d')
+        df['Fecha de Activos'] = df['Fecha de Activos'].dt.strftime('%Y-%m-%d')
+        df['Fecha de Suscripción'] = df['Fecha de Suscripción'].dt.strftime('%Y-%m-%d')
         
-        valores_nulos = xls_file.isna().sum()
+        valores_nulos = df.isna().sum()
         
-        Valor_creditos = str(sum(xls_file['Capital Total'].astype('float64')))
-        Cantidad_creditos = str(len(xls_file))
+        Valor_creditos = str(sum(df['Capital Total'].astype('float64')))
+        Cantidad_creditos = str(len(df))
         
         print("cantidad de registros varios:", valores_nulos)
-        print(f"Usted ha cargado un archivo con {Cantidad_creditos} créditos por valor de {Valor_creditos:.2f}")
+        print(f"Usted ha cargado un archivo con {Cantidad_creditos} créditos por valor de {float(Valor_creditos):.2f}")
+
         
 st.markdown(
     '<span style="color: rgb(120, 154, 61); font-size: 22px;">Sube el archivo a convertir en XML (Excel)</span>',
@@ -154,7 +155,7 @@ if xls_file:
                                      cifraDeControl=Cantidad_creditos,
                                      cifraDeControlValor=Valor_creditos )
             
-            for index,row in xls_file.iterrows():
+            for index,row in df.iterrows():
                 # Crear vencimiento final
                 fechaFinal = pd.to_datetime(row['Fecha de Suscripción'],format ='%Y-%m-%d') + relativedelta(months=int(row['Plazo'])) 
                 fechaFinal = fechaFinal.strftime('%Y-%m-%d')
