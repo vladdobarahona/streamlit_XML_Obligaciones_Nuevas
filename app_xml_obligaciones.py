@@ -16,15 +16,16 @@ import tempfile
 import openpyxl
 #background-color: rgb(255, 255, 255);
 #background-color: rgb(171 , 190 , 76)
+#background-color: rgb(120, 154, 61);
 # Fondo personalizado y fuente
 st.markdown("""
 <style>
     body {
-        background-color:rgb (255 , 255 , 255);
+        background-color:rgb(171 , 190 , 76);
         font-family: 'Handel Gothic', 'Frutiger light - Roman';
     }
     .stApp {
-        background-color: rgb(120, 154, 61);
+        background-color: rgb(255, 255, 255);
         font-family: 'Frutiger Bold', sans-serif;
     }
 </style>
