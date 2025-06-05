@@ -61,7 +61,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-#xls_file = st.file_uploader("Sube tu archivo Excel", type=["xlsx", "xls"])
 xls_file = st.file_uploader("", type=["xlsx", "xls"])
 
 if xls_file:
