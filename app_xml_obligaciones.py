@@ -58,7 +58,7 @@ required_columns = [
 # Cargar Excel file
 #st.title("Validador de Columnas Requeridas")
 st.markdown(
-    '<span style="color: rgb(120, 154, 61); font-size: 22px;">Validador de Columnas Requeridas</span>',
+    '<span style="color: rgb(120, 154, 61); font-size: 44px;">Validador de Columnas Requeridas</span>',
     unsafe_allow_html=True
 )
 
@@ -73,10 +73,18 @@ if xls_file:
     missing_columns = [col for col in required_columns if col not in df.columns]
 
     if missing_columns:
+        st.markdown(
+            '<div style="color: rgb(202,219,42); font-weight: bold;">❌ Faltan las siguientes columnas en el archivo:</div>',
+            unsafe_allow_html=True
+        )
         st.error("❌ Faltan las siguientes columnas en el archivo:")
         for col in missing_columns:
             st.markdown(f"- **{col}**")
     else:
+        st.markdown(
+            '<div style="color: rgb(202,219,42); font-weight: bold;">✅ Todas las columnas requeridas están presentes.</div>',
+            unsafe_allow_html=True
+        )
         st.success("✅ Todas las columnas requeridas están presentes.")
         # Subida de archivos
         df = df.dropna(subset=['Número de Pagare'])
