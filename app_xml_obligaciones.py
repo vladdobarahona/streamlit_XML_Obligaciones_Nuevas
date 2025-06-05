@@ -128,7 +128,7 @@ if xls_file:
                     cod_intermediario = '203018' # indicar código del intermediario
                     print(tipo_plan)
                     tipo_plan = 0 # solo va 1 o cero | # si tipo_plan = 1 entonces bullet sino cuotas capital simétricas
-    
+                    st.write(f"Valor total créditos: {tipo_plan}")
                     for index, row in df.iterrows():
                         # Crear vencimiento final
                         fechaFinal = pd.to_datetime(row['Fecha de Suscripción'],format ='%Y-%m-%d') + relativedelta(months=int(row['Plazo'])) 
