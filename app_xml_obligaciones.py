@@ -18,7 +18,7 @@ import tempfile
 st.markdown("""
 <style>
     body {
-        background-color: #abbe4c;
+        background-color:rgb (171 , 190 , 76);
         font-family: 'Handel Gothic', 'Frutiger light - Roman';
     }
     .stApp {
@@ -38,7 +38,13 @@ with col2:
         unsafe_allow_html=True
     )
 
-xls_file = st.file_uploader("Sube el archivo a convertir en XML (Excel)", type=["xlsx"])
+st.markdown(
+    '<span style="color: rgb(120, 154, 61); font-size: 22px;">Sube el archivo a convertir en XML (Excel)</span>',
+    unsafe_allow_html=True
+)
+
+xls_file = st.file_uploader("", type=["xlsx"])
+
 if xls_file:
     if st.button("Validar estructura"):
     # Subida de archivos
