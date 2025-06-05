@@ -15,11 +15,12 @@ from decimal import Decimal
 import tempfile
 import openpyxl
 #background-color: rgb(255, 255, 255);
+#background-color: rgb(171 , 190 , 76)
 # Fondo personalizado y fuente
 st.markdown("""
 <style>
     body {
-        background-color:rgb (171 , 190 , 76);
+        background-color:rgb (255 , 255 , 255);
         font-family: 'Handel Gothic', 'Frutiger light - Roman';
     }
     .stApp {
