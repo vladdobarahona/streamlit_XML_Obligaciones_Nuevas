@@ -98,6 +98,8 @@ if xls_file:
             st.write(f"Código del programa: {cod_programa}")
             st.write(f"Código del intermediario: {cod_intermediario}")
             st.write(f"Tipo de plan: {'Bullet' if tipo_plan == 1 else 'Cuotas capital simétricas'}")
+            st.write(f"Cantidad de créditos: {Cantidad_creditos}")
+            st.write(f"Valor total créditos: {Valor_creditos}")
             st.header("Generar XML", divider=True)
             if st.button("Generar XML"):
                 try:
