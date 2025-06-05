@@ -123,7 +123,7 @@ if xls_file:
                 obligaciones = ET.Element("{http://www.finagro.com.co/sit}obligaciones",
                                           cifraDeControl=Cantidad_creditos,
                                           cifraDeControlValor=Valor_creditos)
-                #fecha_Desembolso = fecha_Desembolso_str.strftime('%Y-%m-%d')
+                fecha_Desembolso = fecha_Desembolso_str.strftime('%Y-%m-%d')
                 #fecha_Desembolso = date(2025, 5, 9) # indicar fecha desembolso
                 #cod_programa = '126' # indicar código del programa
                 #cod_intermediario = '203018' # indicar código del intermediario
