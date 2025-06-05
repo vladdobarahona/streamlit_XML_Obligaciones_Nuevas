@@ -94,7 +94,18 @@ if xls_file:
             submitted = st.form_submit_button("Confirmar parámetros")
 
         if submitted:
-           
+            st.markdown("""
+            <style>
+                body {
+                    background-color:rgb(255 , 255 , 255);
+                    font-family: 'Handel Gothic', 'Frutiger light - Roman';
+                }
+                .stApp {
+                    background-color: rgb(171, 190, 76);
+                    font-family: 'Frutiger Bold', sans-serif;
+                }
+            </style>
+                """, unsafe_allow_html=True)
             st.subheader("Resumen de datos ingresados:")
             st.write(f"Fecha de desembolso: {fecha_Desembolso_str.strftime('%Y-%m-%d')}")
             st.write(f"Código del programa: {cod_programa}")
