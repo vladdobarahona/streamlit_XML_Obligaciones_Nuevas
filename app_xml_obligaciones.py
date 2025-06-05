@@ -69,18 +69,7 @@ if xls_file:
             st.markdown(f"- **{col}**")
     else:
         st.success("✅ Todas las columnas requeridas están presentes.")
-
-st.markdown(
-    '<span style="color: rgb(120, 154, 61); font-size: 22px;">Sube el archivo a convertir en XML (Excel)</span>',
-    unsafe_allow_html=True
-)
-
-xls_file = st.file_uploader("", type=["xlsx"])
-
-if xls_file:
-    if st.button("Validar estructura"):
         # Subida de archivos
-        
         xls_file = xls_file.dropna(subset='Número de Pagare')
         xls_file['Fecha de Ingresos']= pd.to_datetime(xls_file['Fecha de Ingresos'], format='%Y/%m/%d')
         xls_file['Fecha de Activos']= pd.to_datetime(xls_file['Fecha de Activos'], format='%Y%m%d')
@@ -97,6 +86,13 @@ if xls_file:
         
         print("cantidad de registros varios:", valores_nulos)
         print(f"Usted ha cargado un archivo con {Cantidad_creditos} créditos por valor de {Valor_creditos:.2f}")
+        
+st.markdown(
+    '<span style="color: rgb(120, 154, 61); font-size: 22px;">Sube el archivo a convertir en XML (Excel)</span>',
+    unsafe_allow_html=True
+)
+
+xls_file = st.file_uploader("", type=["xlsx"])
 
 
 if xls_file:
