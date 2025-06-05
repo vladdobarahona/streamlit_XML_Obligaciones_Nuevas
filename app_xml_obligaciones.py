@@ -13,6 +13,8 @@ from dateutil.relativedelta import relativedelta
 import pandas as pd
 from decimal import Decimal
 import tempfile
+import openpyxl
+#pip install openpyxl
 
 # Fondo personalizado y fuente
 st.markdown("""
@@ -64,7 +66,8 @@ st.markdown(
 xls_file = st.file_uploader("", type=["xlsx", "xls"])
 
 if xls_file:
-    df = pd.read_excel(xls_file)
+    #df = pd.read_excel(xls_file)
+    df = pd.read_excel(xls_file, engine='openpyxl')
 
     # Check for missing columns
     missing_columns = [col for col in required_columns if col not in df.columns]
