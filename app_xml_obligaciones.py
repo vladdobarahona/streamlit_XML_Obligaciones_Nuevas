@@ -107,7 +107,7 @@ if xls_file:
                                           cifraDeControl=Cantidad_creditos,
                                           cifraDeControlValor=Valor_creditos)
                 fecha_Desembolso = fecha_Desembolso_str.strftime('%Y-%m-%d')
-
+                
                 for index, row in df.iterrows():
                     # Crear vencimiento final
                     fechaFinal = pd.to_datetime(row['Fecha de Suscripción'],format ='%Y-%m-%d') + relativedelta(months=int(row['Plazo'])) 
@@ -115,7 +115,7 @@ if xls_file:
                     # Crear el elemento 'obligacion'
                     obligacion = ET.SubElement(obligaciones, "{http://www.finagro.com.co/sit}obligacion",
                                                tipoCartera= row['Tipo de Cartera'],
-                                               programaCredito = cod_programa,
+                                               programaCredito = str(cod_programa),
                                                tipoOperacion="1",
                                                tipoMoneda="1",
                                                tipoAgrupamiento="1",
@@ -128,7 +128,7 @@ if xls_file:
                     intermediario = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}intermediario",
                                                    oficinaPagare=str(row['Código Oficina']),
                                                    oficinaObligacion=str(row['Código Oficina']),
-                                                   codigo=cod_intermediario)
+                                                   codigo=str(cod_intermediario))
                 
                     # Crear el elemento 'beneficiarios'
                     beneficiarios = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}beneficiarios",
@@ -147,8 +147,6 @@ if xls_file:
                     identificacion_beneficiario = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}identificacion",
                                                                 tipo="2",
                                                                 numeroIdentificacion=str(row['Numero de Identificacion']))
-                
-                    # Se podría agregar 'negocioFiduciario' dentro de 'identificacion_beneficiario' si fuera necesario
                 
                     # Crear el elemento 'nombre' dentro de 'beneficiario'
                     #calcular por espacios
