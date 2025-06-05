@@ -66,12 +66,6 @@ if xls_file:
         print("cantidad de registros varios:", valores_nulos)
         print(f"Usted ha cargado un archivo con {Cantidad_creditos} créditos por valor de {Valor_creditos:.2f}")
 
-#%% Crear el elemento raíz 'obligaciones' con sus atributos
-ET.register_namespace('', "http://www.finagro.com.co/sit")
-obligaciones = ET.Element("{http://www.finagro.com.co/sit}obligaciones",
-                         cifraDeControl=Cantidad_creditos,
-                         cifraDeControlValor=Valor_creditos )
-
 if xls_file:
     if st.button("Generar XML"):
         #st.title("Parámetros de Desembolso")
@@ -80,7 +74,7 @@ if xls_file:
         #cod_intermediario = '203018' # indicar código del intermediario
         #tipo_plan = 0 # solo va 1 o cero | # si tipo_plan = 1 entonces bullet sino cuotas capital simétricas
         st.markdown(
-                '<h1 style="color: rgb(120,154,61); font-size: 2.25rem; font-weight: bold;">"Parámetros de Desembolso</h1>',
+                '<h1 style="color: rgb(120,154,61); font-size: 2.25rem; font-weight: bold;">Parámetros de Desembolso</h1>',
                 unsafe_allow_html=True
             )
         
@@ -132,6 +126,13 @@ if xls_file:
         st.write(f"Código del programa: {cod_programa}")
         st.write(f"Código del intermediario: {cod_intermediario}")
         st.write(f"Tipo de plan: {'Bullet' if tipo_plan == 1 else 'Cuotas capital simétricas'}")
+        
+        #%% Crear el elemento raíz 'obligaciones' con sus atributos
+        ET.register_namespace('', "http://www.finagro.com.co/sit")
+        obligaciones = ET.Element("{http://www.finagro.com.co/sit}obligaciones",
+                                 cifraDeControl=Cantidad_creditos,
+                                 cifraDeControlValor=Valor_creditos )
+        
         for index,row in xls_file.iterrows():
             # Crear vencimiento final
             fechaFinal = pd.to_datetime(row['Fecha de Suscripción'],format ='%Y-%m-%d') + relativedelta(months=int(row['Plazo'])) 
