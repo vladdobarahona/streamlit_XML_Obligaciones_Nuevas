@@ -64,52 +64,55 @@ st.markdown(
 #xls_file = st.file_uploader("Sube tu archivo Excel", type=["xlsx", "xls"])
 xls_file = st.file_uploader("", type=["xlsx", "xls"])
 
+# Upload Excel file
+xls_file = st.file_uploader("Sube tu archivo Excel", type=["xlsx", "xls"])
+
 if xls_file:
     df = pd.read_excel(xls_file, engine='openpyxl')
     missing_columns = [col for col in required_columns if col not in df.columns]
 
-    if missing_columns:
-        st.error("❌ Faltan las siguientes columnas en el archivo:")
-        for col in missing_columns:
-            st.markdown(f"- **{col}**")
-    else:
-        st.success("✅ Todas las columnas requeridas están presentes.")
-        df = df.dropna(subset=['Número de Pagare'])
-        df['Fecha de Ingresos'] = pd.to_datetime(df['Fecha de Ingresos'], format='%Y/%m/%d')
-        df['Fecha de Activos'] = pd.to_datetime(df['Fecha de Activos'], format='%Y%m%d')
-        df['Fecha de Suscripción'] = pd.to_datetime(df['Fecha de Suscripción'], format='%Y%m%d')
+    if missing_columns:
+        st.error("❌ Faltan las siguientes columnas en el archivo:")
+        for col in missing_columns:
+            st.markdown(f"- **{col}**")
+    else:
+        st.success("✅ Todas las columnas requeridas están presentes.")
+        df = df.dropna(subset=['Número de Pagare'])
+        df['Fecha de Ingresos'] = pd.to_datetime(df['Fecha de Ingresos'], format='%Y/%m/%d')
+        df['Fecha de Activos'] = pd.to_datetime(df['Fecha de Activos'], format='%Y%m%d')
+        df['Fecha de Suscripción'] = pd.to_datetime(df['Fecha de Suscripción'], format='%Y%m%d')
 
-        df['Fecha de Ingresos'] = df['Fecha de Ingresos'].dt.strftime('%Y-%m-%d')
-        df['Fecha de Activos'] = df['Fecha de Activos'].dt.strftime('%Y-%m-%d')
-        df['Fecha de Suscripción'] = df['Fecha de Suscripción'].dt.strftime('%Y-%m-%d')
+        df['Fecha de Ingresos'] = df['Fecha de Ingresos'].dt.strftime('%Y-%m-%d')
+        df['Fecha de Activos'] = df['Fecha de Activos'].dt.strftime('%Y-%m-%d')
+        df['Fecha de Suscripción'] = df['Fecha de Suscripción'].dt.strftime('%Y-%m-%d')
 
-        Valor_creditos = str(sum(df['Capital Total'].astype('float64')))
-        Cantidad_creditos = str(len(df))
+        Valor_creditos = str(sum(df['Capital Total'].astype('float64')))
+        Cantidad_creditos = str(len(df))
 
-        # Formulario de parámetros
-        with st.form("form_parametros"):
-            fecha_Desembolso = st.date_input("Fecha de desembolso", value=date.today())
-            cod_programa = st.text_input("Código del programa", value="501")
-            cod_intermediario = st.text_input("Código del intermediario", value="203018")
-            tipo_plan_checkbox = st.checkbox("¿Es un plan de pagos tipo bullet?", key="tipo_plan_checkbox")
-            tipo_plan = 1 if tipo_plan_checkbox else 0
-            submitted = st.form_submit_button("Confirmar parámetros")
+        # Formulario de parámetros
+        with st.form("form_parametros"):
+            fecha_Desembolso = st.date_input("Fecha de desembolso", value=date.today())
+            cod_programa = st.text_input("Código del programa", value="501")
+            cod_intermediario = st.text_input("Código del intermediario", value="203018")
+            tipo_plan_checkbox = st.checkbox("¿Es un plan de pagos tipo bullet?", key="tipo_plan_checkbox")
+            tipo_plan = 1 if tipo_plan_checkbox else 0
+            submitted = st.form_submit_button("Confirmar parámetros")
 
-        if submitted:
-            st.subheader("Resumen de datos ingresados:")
-            st.write(f"Fecha de desembolso: {fecha_Desembolso}")
-            st.write(f"Código del programa: {cod_programa}")
-            st.write(f"Código del intermediario: {cod_intermediario}")
-            st.write(f"Tipo de plan: {'Bullet' if tipo_plan == 1 else 'Cuotas capital simétricas'}")
+        if submitted:
+            st.subheader("Resumen de datos ingresados:")
+            st.write(f"Fecha de desembolso: {fecha_Desembolso}")
+            st.write(f"Código del programa: {cod_programa}")
+            st.write(f"Código del intermediario: {cod_intermediario}")
+            st.write(f"Tipo de plan: {'Bullet' if tipo_plan == 1 else 'Cuotas capital simétricas'}")
 
-            # Crear XML
-            try:
-                ET.register_namespace('', "http://www.finagro.com.co/sit")
-                obligaciones = ET.Element("{http://www.finagro.com.co/sit}obligaciones",
-                                          cifraDeControl=Cantidad_creditos,
-                                          cifraDeControlValor=Valor_creditos)
+            # Crear XML
+            try:
+                ET.register_namespace('', "http://www.finagro.com.co/sit")
+                obligaciones = ET.Element("{http://www.finagro.com.co/sit}obligaciones",
+                                          cifraDeControl=Cantidad_creditos,
+                                          cifraDeControlValor=Valor_creditos)
 
-                for index, row in df.iterrows():
+                for index, row in df.iterrows():
                     # Crear vencimiento final
                     fechaFinal = pd.to_datetime(row['Fecha de Suscripción'],format ='%Y-%m-%d') + relativedelta(months=int(row['Plazo'])) 
                     fechaFinal = fechaFinal.strftime('%Y-%m-%d')
