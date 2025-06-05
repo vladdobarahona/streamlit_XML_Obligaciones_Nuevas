@@ -122,12 +122,11 @@ if xls_file:
                     obligaciones = ET.Element("{http://www.finagro.com.co/sit}obligaciones",
                                               cifraDeControl=Cantidad_creditos,
                                               cifraDeControlValor=Valor_creditos)
-                    fecha_Desembolso = fecha_Desembolso_str.strftime('%Y-%m-%d')
-                    fecha_Desembolso = date(2025, 5, 9) # indicar fecha desembolso
-                    cod_programa = '126' # indicar código del programa
-                    cod_intermediario = '203018' # indicar código del intermediario
-                    print(tipo_plan)
-                    tipo_plan = 0 # solo va 1 o cero | # si tipo_plan = 1 entonces bullet sino cuotas capital simétricas
+                    #fecha_Desembolso = fecha_Desembolso_str.strftime('%Y-%m-%d')
+                    #fecha_Desembolso = date(2025, 5, 9) # indicar fecha desembolso
+                    #cod_programa = '126' # indicar código del programa
+                    #cod_intermediario = '203018' # indicar código del intermediario
+                    #tipo_plan = 0 # solo va 1 o cero | # si tipo_plan = 1 entonces bullet sino cuotas capital simétricas
                     st.write(f"Valor total créditos: {tipo_plan}")
                     for index, row in df.iterrows():
                         # Crear vencimiento final
