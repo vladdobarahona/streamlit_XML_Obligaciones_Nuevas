@@ -335,6 +335,5 @@ if xls_file:
                             with open(tmp.name, "rb") as f:
                                 st.download_button("📥 Descargar XML de Obligaciones nuevas", f, file_name="Obligaciones.xml", mime="application/xml")
                                 
-        except Exception as e:
-            st.error(f"Ocurrió un error al generar el XML: {e}")
-
+            except Exception as e:
+                st.error(f"Ocurrió un error al generar el XML: {e}")
