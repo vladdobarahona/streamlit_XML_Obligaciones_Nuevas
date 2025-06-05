@@ -47,86 +47,24 @@ xls_file = st.file_uploader("", type=["xlsx"])
 
 if xls_file:
     if st.button("Validar estructura"):
-    # Subida de archivos
-    
-    
-    #fecha_Desembolso = date(2025, 5, 9) # indicar fecha desembolso
-    #cod_programa = '126' # indicar código del programa
-    #cod_intermediario = '203018' # indicar código del intermediario
-    #tipo_plan = 0 # solo va 1 o cero | # si tipo_plan = 1 entonces bullet sino cuotas capital simétricas
-    
-    #st.title("Parámetros de Desembolso")
-    st.markdown(
-            '<h1 style="color: rgb(120,154,61); font-size: 2.25rem; font-weight: bold;">"Parámetros de Desembolso</h1>',
-            unsafe_allow_html=True
-        )
-    
-    
-    st.markdown(
-        '<label style="color: rgb(11, 94, 94); font-weight: bold;">Indicar fecha de desembolso:</label>',
-        unsafe_allow_html=True
-    )
-    
-    # Fecha de desembolso
-    fecha_Desembolso = st.date_input(
-        label=" ",  # Empty label to avoid duplication
-        value=date.today()
-    )
-    
-    
-    # Código del programa
-    st.markdown(
-        '<label style="color: rgb(11, 94, 94); font-weight: bold;">Indicar código del programa:</label>',
-        unsafe_allow_html=True
-    )
-    
-    cod_programa = st.text_input(
-        label=" ",  # Etiqueta vacia para que no se duplique con el nombre antes indicado
-        value="501"
-    )
-    
-    # Código del intermediario
-    st.markdown(
-        '<label style="color: rgb(11, 94, 94); font-weight: bold;">Indicar código del intermediario:</label>',
-        unsafe_allow_html=True
-    )
-    cod_intermediario = st.text_input(
-        label=" ",  # Etiqueta vacia para que no se duplique con el nombre antes indicado
-        value="203018"
-    )
-    
-    # Tipo de plan
-    st.markdown(
-        '<label style="color: rgb(11, 94, 94); font-weight: bold;">¿Es un plan de pagos tipo bullet?</label>',
-        unsafe_allow_html=True
-    )
-    tipo_plan_checkbox = st.checkbox(" ", key="tipo_plan_checkbox") # Empty label to avoid duplication
-    tipo_plan = 1 if tipo_plan_checkbox else 0
-    
-    # Mostrar los valores ingresados
-    st.subheader("Resumen de datos ingresados:")
-    st.write(f"Fecha de desembolso: {fecha_Desembolso}")
-    st.write(f"Código del programa: {cod_programa}")
-    st.write(f"Código del intermediario: {cod_intermediario}")
-    st.write(f"Tipo de plan: {'Bullet' if tipo_plan == 1 else 'Cuotas capital simétricas'}")
-    
-    
-    xls_file = xls_file.dropna(subset='Número de Pagare')
-    xls_file['Fecha de Ingresos']= pd.to_datetime(xls_file['Fecha de Ingresos'], format='%Y/%m/%d')
-    xls_file['Fecha de Activos']= pd.to_datetime(xls_file['Fecha de Activos'], format='%Y%m%d')
-    xls_file['Fecha de Suscripción'] = pd.to_datetime(xls_file['Fecha de Suscripción'],format='%Y%m%d')
-    
-    xls_file['Fecha de Ingresos']= xls_file['Fecha de Ingresos'].dt.strftime('%Y-%m-%d')
-    xls_file['Fecha de Activos']= xls_file ['Fecha de Activos'].dt.strftime('%Y-%m-%d')
-    xls_file['Fecha de Suscripción'] = xls_file['Fecha de Suscripción'].dt.strftime('%Y-%m-%d')
-    
-    valores_nulos = xls_file.isna().sum()
-    
-    Valor_creditos = str(sum(xls_file['Capital Total'].astype('float64')))
-    Cantidad_creditos = str(len(xls_file))
-    
-    print("cantidad de registros varios:", valores_nulos)
-    print(f"Usted ha cargado un archivo con {Cantidad_creditos} créditos por valor de {Valor_creditos:.2f}")
+        # Subida de archivos
+        
+        xls_file = xls_file.dropna(subset='Número de Pagare')
+        xls_file['Fecha de Ingresos']= pd.to_datetime(xls_file['Fecha de Ingresos'], format='%Y/%m/%d')
+        xls_file['Fecha de Activos']= pd.to_datetime(xls_file['Fecha de Activos'], format='%Y%m%d')
+        xls_file['Fecha de Suscripción'] = pd.to_datetime(xls_file['Fecha de Suscripción'],format='%Y%m%d')
+        
+        xls_file['Fecha de Ingresos']= xls_file['Fecha de Ingresos'].dt.strftime('%Y-%m-%d')
+        xls_file['Fecha de Activos']= xls_file ['Fecha de Activos'].dt.strftime('%Y-%m-%d')
+        xls_file['Fecha de Suscripción'] = xls_file['Fecha de Suscripción'].dt.strftime('%Y-%m-%d')
+        
+        valores_nulos = xls_file.isna().sum()
+        
+        Valor_creditos = str(sum(xls_file['Capital Total'].astype('float64')))
+        Cantidad_creditos = str(len(xls_file))
+        
+        print("cantidad de registros varios:", valores_nulos)
+        print(f"Usted ha cargado un archivo con {Cantidad_creditos} créditos por valor de {Valor_creditos:.2f}")
 
 #%% Crear el elemento raíz 'obligaciones' con sus atributos
 ET.register_namespace('', "http://www.finagro.com.co/sit")
@@ -136,6 +74,64 @@ obligaciones = ET.Element("{http://www.finagro.com.co/sit}obligaciones",
 
 if xls_file:
     if st.button("Generar XML"):
+        #st.title("Parámetros de Desembolso")
+        #fecha_Desembolso = date(2025, 5, 9) # indicar fecha desembolso
+        #cod_programa = '126' # indicar código del programa
+        #cod_intermediario = '203018' # indicar código del intermediario
+        #tipo_plan = 0 # solo va 1 o cero | # si tipo_plan = 1 entonces bullet sino cuotas capital simétricas
+        st.markdown(
+                '<h1 style="color: rgb(120,154,61); font-size: 2.25rem; font-weight: bold;">"Parámetros de Desembolso</h1>',
+                unsafe_allow_html=True
+            )
+        
+        
+        st.markdown(
+            '<label style="color: rgb(11, 94, 94); font-weight: bold;">Indicar fecha de desembolso:</label>',
+            unsafe_allow_html=True
+        )
+        
+        # Fecha de desembolso
+        fecha_Desembolso = st.date_input(
+            label=" ",  # Empty label to avoid duplication
+            value=date.today()
+        )
+        
+        
+        # Código del programa
+        st.markdown(
+            '<label style="color: rgb(11, 94, 94); font-weight: bold;">Indicar código del programa:</label>',
+            unsafe_allow_html=True
+        )
+        
+        cod_programa = st.text_input(
+            label=" ",  # Etiqueta vacia para que no se duplique con el nombre antes indicado
+            value="501"
+        )
+        
+        # Código del intermediario
+        st.markdown(
+            '<label style="color: rgb(11, 94, 94); font-weight: bold;">Indicar código del intermediario:</label>',
+            unsafe_allow_html=True
+        )
+        cod_intermediario = st.text_input(
+            label=" ",  # Etiqueta vacia para que no se duplique con el nombre antes indicado
+            value="203018"
+        )
+        
+        # Tipo de plan
+        st.markdown(
+            '<label style="color: rgb(11, 94, 94); font-weight: bold;">¿Es un plan de pagos tipo bullet?</label>',
+            unsafe_allow_html=True
+        )
+        tipo_plan_checkbox = st.checkbox(" ", key="tipo_plan_checkbox") # Empty label to avoid duplication
+        tipo_plan = 1 if tipo_plan_checkbox else 0
+        
+        # Mostrar los valores ingresados
+        st.subheader("Resumen de datos ingresados:")
+        st.write(f"Fecha de desembolso: {fecha_Desembolso}")
+        st.write(f"Código del programa: {cod_programa}")
+        st.write(f"Código del intermediario: {cod_intermediario}")
+        st.write(f"Tipo de plan: {'Bullet' if tipo_plan == 1 else 'Cuotas capital simétricas'}")
         for index,row in xls_file.iterrows():
             # Crear vencimiento final
             fechaFinal = pd.to_datetime(row['Fecha de Suscripción'],format ='%Y-%m-%d') + relativedelta(months=int(row['Plazo'])) 
