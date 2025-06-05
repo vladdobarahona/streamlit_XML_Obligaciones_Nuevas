@@ -65,8 +65,8 @@ st.markdown(
 xls_file = st.file_uploader("", type=["xlsx", "xls"])
 
 if xls_file:
-    df = pd.read_excel(xls_file, engine='openpyxl')
-    missing_columns = [col for col in required_columns if col not in df.columns]
+    df = pd.read_excel(xls_file, engine='openpyxl')
+    missing_columns = [col for col in required_columns if col not in df.columns]
 
     if missing_columns:
         st.error("❌ Faltan las siguientes columnas en el archivo:")
