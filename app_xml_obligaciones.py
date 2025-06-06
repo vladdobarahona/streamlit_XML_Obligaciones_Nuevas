@@ -131,7 +131,10 @@ if xls_file:
             #st.write(f"Código del intermediario: {cod_intermediario}")
             st.write(f"Tipo de plan: {'Bullet' if tipo_plan == 1 else 'Cuotas capital simétricas'}")
             st.write(f"Cantidad de créditos: {Cantidad_creditos}")
-            st.write(f"Valor total créditos: {sum(df['Capital_total'].astype('float64')):.2f}")
+            #st.write(f"Valor total créditos: {sum(df['Capital_total'].astype('float64')):.2f}")
+            valor = sum(df['Capital_total'].astype('float64'))
+            st.markdown(f"<h4 style='color:#789a3d;'>Valor total créditos: ${valor:,.2f}</h4>", unsafe_allow_html=True)
+
 
             #st.header("Generar XML", divider=True)
             #if st.button("Generar XML"):
