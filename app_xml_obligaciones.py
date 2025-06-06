@@ -139,7 +139,7 @@ if xls_file:
             st.subheader("Resumen de datos ingresados:")
             st.write(f"Fecha de desembolso: {fecha_Desembolso_str.strftime('%Y-%m-%d')}")
             #st.write(f"Código del programa: {Codigo_de_programa}")
-            st.write(f"Código del intermediario: {cod_intermediario}")
+            #st.write(f"Código del intermediario: {cod_intermediario}")
             st.write(f"Tipo de plan: {'Bullet' if tipo_plan == 1 else 'Cuotas capital simétricas'}")
             st.write(f"Cantidad de créditos: {Cantidad_creditos}")
             st.write(f"Valor total créditos: {sum(df['Capital_total'].astype('float64')):.2f}")
