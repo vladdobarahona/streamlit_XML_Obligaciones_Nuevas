@@ -8,7 +8,8 @@ Created on Tue May 20 14:34:03 2025
 # %%importar librerias
 import streamlit as st
 import xml.etree.ElementTree as ET
-from datetime import date,datetime
+from datetime import date
+import time
 from dateutil.relativedelta import relativedelta
 import pandas as pd
 from decimal import Decimal
@@ -164,7 +165,7 @@ if xls_file:
                                                tipoMoneda="1",
                                                tipoAgrupamiento="1",
                                                numeroPagare= row['Numero_del_pagare'],
-                                               numeroObligacionIntermediario= str(datetime.today().strftime("%Y%d%H%M%S%f")),
+                                               numeroObligacionIntermediario= str(time.time_ns()),
                                                fechaSuscripcion=str(row['Fecha_de_suscripcion'] ),
                                                fechaDesembolso=str(fecha_Desembolso))
                 
