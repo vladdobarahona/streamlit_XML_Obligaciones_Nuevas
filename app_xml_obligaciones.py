@@ -66,7 +66,7 @@ required_columns = [
 'Ubicacion_Predio',
 'Codigo_oficina_de_origen',
 'Producto_relacionado',
-'Codigo_destino_destino_1',
+'Codigo_destino_1',
 'Unidades_destino_1',
 'Costo_de_Inversión_destino_1',
 'Valor_a_Financiar_destino_1',
@@ -74,11 +74,11 @@ required_columns = [
 'Unidades_destino_2',
 'Costo_de_Inversión_destino_2',
 'Valor_a_Financiar_destino_2',
-'Codigo_destino_destino_3',
+'Codigo_destino_3',
 'Unidades_destino_3',
 'Costo_de_Inversión_destino_3',
 'Valor_a_Financiar_destino_3',
-'Codigo_destino_destino_4',
+'Codigo_destino_4',
 'Unidades_destino_4',
 'Costo_de_Inversión_destino_4',
 'Valor_a_Financiar_destino_4',
@@ -262,7 +262,7 @@ if xls_file:
                     # pendiente loop a partir de la cantida de destinos, solo hay hasta 4 destinos   
                     # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
                     destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
-                                                    codigo=str(row['Codigo_destino_destino_1']),
+                                                    codigo=str(row['Codigo_destino_1']),
                                                     unidadesAFinanciar=str(row['Unidades_destino_1']),
                                                     costoInversion=str(row['Costo_de_Inversión_destino_1']))
                 
@@ -271,10 +271,10 @@ if xls_file:
                     valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar", {"xmlns": ""})
                     valor_a_financiar.text=str(row['Valor_a_Financiar_destino_1'])
                     
-                    if not row['Codigo_destino_destino_2']!= row['Codigo_destino_destino_2']: 
+                    if not row['Codigo_destino_2']!= row['Codigo_destino_2']: 
                         # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
                         destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
-                                                        codigo=str(row['Codigo_destino_destino_2']),
+                                                        codigo=str(row['Codigo_destino_2']),
                                                         unidadesAFinanciar=str(row['Unidades_destino_2']),
                                                         costoInversion=str(row['Costo_de_Inversión_destino_2']))
                 
@@ -283,10 +283,10 @@ if xls_file:
                         valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar", {"xmlns": ""})
                         valor_a_financiar.text=str(row['Valor_a_Financiar_destino_2'])
                     
-                    if not row['Codigo_destino_destino_3']!= row['Codigo_destino_destino_3']: 
+                    if not row['Codigo_destino_3']!= row['Codigo_destino_3']: 
                         # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
                         destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
-                                                        codigo=str(row['Codigo_destino_destino_3']),
+                                                        codigo=str(row['Codigo_destino_3']),
                                                         unidadesAFinanciar=str(row['Unidades_destino_3']),
                                                         costoInversion=str(row['Costo_de_Inversión_destino_3']))
                 
@@ -295,10 +295,10 @@ if xls_file:
                         valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar", {"xmlns": ""})
                         valor_a_financiar.text=str(row['Valor_a_Financiar_destino_3'])
                     
-                    if not row['Codigo_destino_destino_4']!= row['Codigo_destino_destino_3']: 
+                    if not row['Codigo_destino_4']!= row['Codigo_destino_3']: 
                         # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
                         destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
-                                                        codigo=str(row['Codigo_destino_destino_4']),
+                                                        codigo=str(row['Codigo_destino_4']),
                                                         unidadesAFinanciar=str(row['Unidades_destino_4']),
                                                         costoInversion=str(row['Costo_de_Inversión_destino_4']))
                 
