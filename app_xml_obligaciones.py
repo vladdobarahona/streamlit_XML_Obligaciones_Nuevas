@@ -117,8 +117,8 @@ if xls_file:
         # Formulario de parámetros
         with st.form("form_parametros"):
             fecha_Desembolso_str = st.date_input("Fecha de desembolso", value=date.today())
-            Codigo_de_programa = st.text_input("Código del programa", value="501")
-            cod_intermediario = st.text_input("Código del intermediario", value="203018")
+            #Codigo_de_programa = st.text_input("Código del programa", value="501")
+            #cod_intermediario = st.text_input("Código del intermediario", value="203018")
             tipo_plan_checkbox = st.checkbox("¿Es un plan de pagos tipo bullet?", key="tipo_plan_checkbox")
             tipo_plan = 1 if tipo_plan_checkbox else 0
             submitted = st.form_submit_button("Confirmar parámetros")
