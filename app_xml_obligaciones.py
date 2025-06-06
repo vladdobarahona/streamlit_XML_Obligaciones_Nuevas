@@ -124,7 +124,7 @@ if xls_file:
             submitted = st.form_submit_button("Confirmar parámetros")
 
         if submitted:
-            st.ballons()
+            
             st.subheader("Resumen de datos ingresados:")
             st.write(f"Fecha de desembolso: {fecha_Desembolso_str.strftime('%Y-%m-%d')}")
             #st.write(f"Código del programa: {Codigo_de_programa}")
