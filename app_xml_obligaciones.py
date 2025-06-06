@@ -8,7 +8,7 @@ Created on Tue May 20 14:34:03 2025
 # %%importar librerias
 import streamlit as st
 import xml.etree.ElementTree as ET
-from datetime import date
+from datetime import date,datetime
 from dateutil.relativedelta import relativedelta
 import pandas as pd
 from decimal import Decimal
@@ -43,17 +43,47 @@ with col2:
 
 # Columnas predeterminadas para el archivo Excel
 required_columns = [
-    'Tipo de Cartera', 'Tipo de Productor', 'Número de Pagare', 'Número de Pagare Anterior',
-    'Fecha de Suscripción', 'Ciudad de Inversión', 'Numero de Identificacion',
-    'Tipo Identificacion Finagro', 'Nombre Razón Social', 'Email Beneficiario',
-    'Teléfono Beneficiario', 'Fecha de Activos', 'Monto Activos', 'Dirección Beneficiario',
-    'Plazo', 'Tipo Plan de Pagos', 'Capital Total', 'Porcentaje Fag', 'Indicativo Fag',
-    'Tipo Comisión', 'Puntos IBR', 'Ubicación Predio', 'Código Oficina', 'Producto Relacionado',
-    'Código Destino 1', 'Unidades Destino 1', 'Costo Inversión 1', 'Valor a Financiar 1',
-    'Código Destino 2', 'Unidades Destino 2', 'Costo Inversión 2', 'Valor a Financiar 2',
-    'Código Destino 3', 'Unidades Destino 3', 'Costo Inversión 3', 'Valor a Financiar 3',
-    'Código Destino 4', 'Unidades Destino 4', 'Costo Inversión 4', 'Valor a Financiar 4',
-    'Valor Ingresos', 'Fecha de Ingresos', 'Moneda Ingresos', 'Moneda de Activos'
+'Tipo_de_cartera', 'Codigo_intermediario','Codigo_de_programa',
+'Tipo_de_productor',
+'Numero_del_pagare',
+'Fecha_de_suscripcion',
+'Ciudad_de_Inversion',
+'Identificacion_del_primer_beneficiario',
+'Tipo_de_Identificacion',
+'Nombre_del_beneficiario_o_razon_social',
+'Email_Beneficiario',
+'Telefono_Beneficiario',
+'Fecha_de_activos',
+'Monto_Activos',
+'Direccion_Beneficiario',
+'Plazo',
+'Tipo_plan_pagos',
+'Capital_total',
+'Porcentaje_Fag',
+'Indicativo_Fag',
+'Tipo_Comision',
+'Puntos_IBR',
+'Ubicacion_Predio',
+'Codigo_oficina_de_origen',
+'Producto_relacionado',
+'Codigo_destino_destino_1',
+'Unidades_destino_1',
+'Costo_de_Inversión_destino_1',
+'Valor_a_Financiar_destino_1',
+'Codigo_destino__2',
+'Unidades_destino_2',
+'Costo_de_Inversión_destino_2',
+'Valor_a_Financiar_destino_2',
+'Codigo_destino__destino_3',
+'Unidades_destino__3',
+'Costo_de_Inversión_destino__3',
+'Valor_a_Financiar_destino__3',
+'Codigo_destino__destino_4',
+'Unidades_destino__4',
+'Costo_de_Inversión_destino__4',
+'Valor_a_Financiar_destino__4',
+'Valor_Ingresos',
+'Fecha_Corte_Ingresos'
 ]
 
 st.markdown(
@@ -72,22 +102,22 @@ if xls_file:
             st.markdown(f"- **{col}**")
     else:
         st.success("✅ Todas las columnas requeridas están presentes.")
-        df = df.dropna(subset=['Número de Pagare'])
-        df['Fecha de Ingresos'] = pd.to_datetime(df['Fecha de Ingresos'], format='%Y/%m/%d')
-        df['Fecha de Activos'] = pd.to_datetime(df['Fecha de Activos'], format='%Y%m%d')
-        df['Fecha de Suscripción'] = pd.to_datetime(df['Fecha de Suscripción'], format='%Y%m%d')
+        df = df.dropna(subset=['Numero_del_pagare'])
+        df['Fecha_Corte_Ingresos'] = pd.to_datetime(df['Fecha_Corte_Ingresos'], format='%Y/%m/%d')
+        df['Fecha_de_activos'] = pd.to_datetime(df['Fecha_de_activos'], format='%Y/%m/%d')
+        df['Fecha_de_suscripcion'] = pd.to_datetime(df['Fecha_de_suscripcion'], format='%Y/%m/%d')
 
-        df['Fecha de Ingresos'] = df['Fecha de Ingresos'].dt.strftime('%Y-%m-%d')
-        df['Fecha de Activos'] = df['Fecha de Activos'].dt.strftime('%Y-%m-%d')
-        df['Fecha de Suscripción'] = df['Fecha de Suscripción'].dt.strftime('%Y-%m-%d')
+        df['Fecha_Corte_Ingresos'] = df['Fecha_Corte_Ingresos'].dt.strftime('%Y-%m-%d')
+        df['Fecha_de_activos'] = df['Fecha_de_activos'].dt.strftime('%Y-%m-%d')
+        df['Fecha_de_suscripcion'] = df['Fecha_de_suscripcion'].dt.strftime('%Y-%m-%d')
 
-        Valor_creditos = str(sum(df['Capital Total'].astype('float64')))
+        Valor_creditos = str(sum(df['Capital_total'].astype('float64')))
         Cantidad_creditos = str(len(df))
 
         # Formulario de parámetros
         with st.form("form_parametros"):
             fecha_Desembolso_str = st.date_input("Fecha de desembolso", value=date.today())
-            cod_programa = st.text_input("Código del programa", value="501")
+            Codigo_de_programa = st.text_input("Código del programa", value="501")
             cod_intermediario = st.text_input("Código del intermediario", value="203018")
             tipo_plan_checkbox = st.checkbox("¿Es un plan de pagos tipo bullet?", key="tipo_plan_checkbox")
             tipo_plan = 1 if tipo_plan_checkbox else 0
@@ -108,11 +138,11 @@ if xls_file:
                 """, unsafe_allow_html=True)
             st.subheader("Resumen de datos ingresados:")
             st.write(f"Fecha de desembolso: {fecha_Desembolso_str.strftime('%Y-%m-%d')}")
-            st.write(f"Código del programa: {cod_programa}")
+            #st.write(f"Código del programa: {Codigo_de_programa}")
             st.write(f"Código del intermediario: {cod_intermediario}")
             st.write(f"Tipo de plan: {'Bullet' if tipo_plan == 1 else 'Cuotas capital simétricas'}")
             st.write(f"Cantidad de créditos: {Cantidad_creditos}")
-            st.write(f"Valor total créditos: {sum(df['Capital Total'].astype('float64')):.2f}")
+            st.write(f"Valor total créditos: {sum(df['Capital_total'].astype('float64')):.2f}")
 
             #st.header("Generar XML", divider=True)
             #if st.button("Generar XML"):
@@ -125,32 +155,32 @@ if xls_file:
                                           cifraDeControlValor=Valor_creditos)
                 fecha_Desembolso = fecha_Desembolso_str.strftime('%Y-%m-%d')
                 #fecha_Desembolso = date(2025, 5, 9) # indicar fecha desembolso
-                #cod_programa = '126' # indicar código del programa
+                #Codigo_de_programa = '126' # indicar código del programa
                 #cod_intermediario = '203018' # indicar código del intermediario
                 #tipo_plan = 0 # solo va 1 o cero | # si tipo_plan = 1 entonces bullet sino cuotas capital simétricas
                 st.write(f"Tipo plan: {tipo_plan}")
                 st.dataframe(df)
                 for index, row in df.iterrows():
                     # Crear vencimiento final
-                    fechaFinal = pd.to_datetime(row['Fecha de Suscripción'],format ='%Y-%m-%d') + relativedelta(months=int(row['Plazo'])) 
+                    fechaFinal = pd.to_datetime(row['Fecha_de_suscripcion'],format ='%Y-%m-%d') + relativedelta(months=int(row['Plazo'])) 
                     fechaFinal = fechaFinal.strftime('%Y-%m-%d')
                     # Crear el elemento 'obligacion'
                     obligacion = ET.SubElement(obligaciones, "{http://www.finagro.com.co/sit}obligacion",
-                                               tipoCartera= row['Tipo de Cartera'],
-                                               programaCredito = str(cod_programa),
+                                               tipoCartera= row['Tipo_de_cartera'],
+                                               programaCredito = str(row['Codigo_de_programa']),
                                                tipoOperacion="1",
                                                tipoMoneda="1",
                                                tipoAgrupamiento="1",
-                                               numeroPagare= row['Número de Pagare'],
-                                               numeroObligacionIntermediario= row['Número de Pagare'],
-                                               fechaSuscripcion=str(row['Fecha de Suscripción'] ),
+                                               numeroPagare= row['Numero_del_pagare'],
+                                               numeroObligacionIntermediario= str(datetime.today().strftime("%Y%d%H%M%S%f")),
+                                               fechaSuscripcion=str(row['Fecha_de_suscripcion'] ),
                                                fechaDesembolso=str(fecha_Desembolso))
                 
                     # Crear el elemento 'intermediario'
                     intermediario = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}intermediario",
-                                                   oficinaPagare=str(row['Código Oficina']),
-                                                   oficinaObligacion=str(row['Código Oficina']),
-                                                   codigo=str(cod_intermediario))
+                                                   oficinaPagare=str(row['Codigo_oficina_de_origen']),
+                                                   oficinaObligacion=str(row['Codigo_oficina_de_origen']),
+                                                   codigo=str(row['Codigo_intermediario']))
                 
                     # Crear el elemento 'beneficiarios'
                     beneficiarios = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}beneficiarios",
@@ -158,22 +188,23 @@ if xls_file:
                 
                     # Crear el elemento 'beneficiario'
                     beneficiario = ET.SubElement(beneficiarios, "{http://www.finagro.com.co/sit}beneficiario",
-                                                 correoElectronico=str(row['Email Beneficiario']),
+                                                 correoElectronico=str(row['Email_Beneficiario']),
                                                  tipoAgrupacion="1",
                                                  tipoPersona="1",
-                                                 tipoProductor=str(row['Tipo de Productor']),
-                                                 actividadEconomica=str(row['Producto Relacionado']),
+                                                 tipoProductor=str(row['Tipo_de_productor']),
+                                                 actividadEconomica=str(row['Producto_relacionado']),
                                                  cumpleCondicionesProductorAgrupacion="true")
                 
                     # Crear el elemento 'identificacion' dentro de 'beneficiario'
                     identificacion_beneficiario = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}identificacion",
-                                                                tipo="2",
-                                                                numeroIdentificacion=str(row['Numero de Identificacion']))
-                
+                                                                tipo=str(row['Tipo_de_Identificacion']),
+                                                                numeroIdentificacion=str(row['Identificacion_del_primer_beneficiario']))
+
+                    
                     # Crear el elemento 'nombre' dentro de 'beneficiario'
                     #calcular por espacios
                     nombre_beneficiario = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}nombre",
-                                                       primerNombre=row['Nombre Razón Social'],
+                                                       primerNombre=row['Nombre_del_beneficiario_o_razon_social'],
                                                        segundoNombre="",
                                                        primerApellido="",
                                                        segundoApellido="",
@@ -181,25 +212,25 @@ if xls_file:
                 
                     # Crear el elemento 'nombre' dentro de 'beneficiario'
                     direccionCorrespondencia = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}direccionCorrespondencia",
-                                                    direccion="R|"+str(row['Ubicación Predio']),
-                                                    municipio=str(row['Ciudad de Inversión']))
+                                                    direccion="R|"+str(row['Direccion_Beneficiario']),
+                                                    municipio=str(row['Ciudad_de_Inversion']))
                 
                     # Crear el elemento 'nombre' dentro de 'beneficiario'
                     numeroTelefono = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}numeroTelefono",
                                                    prefijo="6",
-                                                   numero=str(row['Teléfono Beneficiario']))
+                                                   numero=str(row['Telefono_Beneficiario']))
                 
                     # Crear el elemento 'valorActivos' dentro de 'beneficiario'
                     valor_activos = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}valorActivos",
-                                                    valor=str(row['Monto Activos']),
-                                                    fechaCorte=str(row['Fecha de Activos']),
-                                                    tipoDato=str(row['Moneda de Activos']))
+                                                    valor=str(row['Monto_Activos']),
+                                                    fechaCorte=str(row['Fecha_de_activos']),
+                                                    tipoDato="COP")
                 
                     # Crear el elemento 'valorIngresos' dentro de 'beneficiario'
                     valor_ingresos = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}valorIngresos",
-                                                     valor=str(row['Valor Ingresos']),
-                                                     fechaCorte=str(row['Fecha de Ingresos']),
-                                                     tipoDato=str(row['Moneda Ingresos']))
+                                                     valor=str(row['Valor_Ingresos']),
+                                                     fechaCorte=str(row['Fecha_Corte_Ingresos']),
+                                                     tipoDato="COP")
                 
                     # Crear el elemento 'proyecto'
                     proyecto = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}proyecto",
@@ -213,15 +244,15 @@ if xls_file:
                     # Crear un elemento 'predio' dentro de 'predios'
                     predio = ET.SubElement(predios, "{http://www.finagro.com.co/sit}predio",
                                            tipo="1",
-                                           municipio=row['Ciudad de Inversión'],
-                                           direccion="R|" +str(row['Ubicación Predio']))
+                                           municipio=row['Ciudad_de_Inversion'],
+                                           direccion="R|" +str(row['Ubicacion_Predio']))
                 
                     #pendiente crear loop a partir de "Indicativo Fag"
-                    if row['Indicativo Fag'] == "S":
+                    if row['Indicativo_Fag'] == "S":
                         # Crear el elemento 'garantiaFAG'
                         garantiaFAG = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}garantiaFAG",
-                                                         tipoComision =str(row['Tipo Comisión']),
-                                                         porcentajeCobertura = str(row['Porcentaje Fag'])
+                                                         tipoComision =str(row['Tipo_Comision']),
+                                                         porcentajeCobertura = str(row['Porcentaje_Fag'])
                                                          )
                    
                     
@@ -231,68 +262,68 @@ if xls_file:
                     # pendiente loop a partir de la cantida de destinos, solo hay hasta 4 destinos   
                     # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
                     destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
-                                                    codigo=str(row['Código Destino 1']),
-                                                    unidadesAFinanciar=str(row['Unidades Destino 1']),
-                                                    costoInversion=str(row['Costo Inversión 1']))
+                                                    codigo=str(row['Codigo_destino_destino_1']),
+                                                    unidadesAFinanciar=str(row['Unidades_destino_1']),
+                                                    costoInversion=str(row['Costo_de_Inversión_destino_1']))
                 
                     # Crear el elemento 'destinoCreditoValorAFinanciar' dentro de 'destinoCredito'
                     destino_credito_valor = ET.SubElement(destino_credito, "{http://www.finagro.com.co/sit}destinoCreditoValorAFinanciar")
                     valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar", {"xmlns": ""})
-                    valor_a_financiar.text=str(row['Valor a Financiar 1'])
+                    valor_a_financiar.text=str(row['Valor_a_Financiar_destino_1'])
                     
-                    if not row['Código Destino 2']!= row['Código Destino 2']: 
+                    if not row['Codigo_destino_destino_2']!= row['Codigo_destino_destino_2']: 
                         # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
                         destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
-                                                        codigo=str(row['Código Destino 2']),
-                                                        unidadesAFinanciar=str(row['Unidades Destino 2']),
-                                                        costoInversion=str(row['Costo Inversión 2']))
+                                                        codigo=str(row['Codigo_destino_destino_2']),
+                                                        unidadesAFinanciar=str(row['Unidades_destino_2']),
+                                                        costoInversion=str(row['Costo_de_Inversión_destino_2']))
                 
                         # Crear el elemento 'destinoCreditoValorAFinanciar' dentro de 'destinoCredito'
                         destino_credito_valor = ET.SubElement(destino_credito, "{http://www.finagro.com.co/sit}destinoCreditoValorAFinanciar")
                         valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar", {"xmlns": ""})
-                        valor_a_financiar.text=str(row['Valor a Financiar 2'])
+                        valor_a_financiar.text=str(row['Valor_a_Financiar_destino_2'])
                     
-                    if not row['Código Destino 3']!= row['Código Destino 3']: 
+                    if not row['Codigo_destino_destino_3']!= row['Codigo_destino_destino_3']: 
                         # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
                         destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
-                                                        codigo=str(row['Código Destino 3']),
-                                                        unidadesAFinanciar=str(row['Unidades Destino 3']),
-                                                        costoInversion=str(row['Costo Inversión 3']))
+                                                        codigo=str(row['Codigo_destino_destino_3']),
+                                                        unidadesAFinanciar=str(row['Unidades_destino_3']),
+                                                        costoInversion=str(row['Costo_de_Inversión_destino_3']))
                 
                         # Crear el elemento 'destinoCreditoValorAFinanciar' dentro de 'destinoCredito'
                         destino_credito_valor = ET.SubElement(destino_credito, "{http://www.finagro.com.co/sit}destinoCreditoValorAFinanciar")
                         valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar", {"xmlns": ""})
-                        valor_a_financiar.text=str(row['Valor a Financiar 3'])
+                        valor_a_financiar.text=str(row['Valor_a_Financiar_destino_3'])
                     
-                    if not row['Código Destino 4']!= row['Código Destino 3']: 
+                    if not row['Codigo_destino_destino_4']!= row['Codigo_destino_destino_3']: 
                         # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
                         destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
-                                                        codigo=str(row['Código Destino 4']),
-                                                        unidadesAFinanciar=str(row['Unidades Destino 4']),
-                                                        costoInversion=str(row['Costo Inversión 4']))
+                                                        codigo=str(row['Codigo_destino_destino_4']),
+                                                        unidadesAFinanciar=str(row['Unidades_destino_4']),
+                                                        costoInversion=str(row['Costo_de_Inversión_destino_4']))
                 
                         # Crear el elemento 'destinoCreditoValorAFinanciar' dentro de 'destinoCredito'
                         destino_credito_valor = ET.SubElement(destino_credito, "{http://www.finagro.com.co/sit}destinoCreditoValorAFinanciar")
                         valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar", {"xmlns": ""})
-                        valor_a_financiar.text=str(row['Valor a Financiar 4'])
+                        valor_a_financiar.text=str(row['Valor_a_Financiar_destino_4'])
                     
                     # Crear el elemento 'financiacion'
                     financiacion = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}financiacion",
                                                    fechaVencimientoFinal=str(fechaFinal),
                                                    plazoCredito=str(row['Plazo']),
-                                                   valorTotalCredito=str(row['Capital Total']),
+                                                   valorTotalCredito=str(row['Capital_total']),
                                                    porcentaje="100",
-                                                   valorObligacion=str(row['Capital Total']))
+                                                   valorObligacion=str(row['Capital_total']))
                 
                     # Datos para las cuotas
                     datos_cuotas = []
-                    cantidad_cuotas= int(int(row['Plazo'])/int(row['Tipo Plan de Pagos']))
-                    cuota_capital = int(int(row['Capital Total'])/cantidad_cuotas)
+                    cantidad_cuotas= int(int(row['Plazo'])/int(row['Tipo_plan_pagos']))
+                    cuota_capital = int(int(row['Capital_total'])/cantidad_cuotas)
                     
-                    ult_cuota_capital = cuota_capital if int(row['Capital Total']) - (cantidad_cuotas*cuota_capital) == 0 else str(int(row['Capital Total']) - (Decimal(cantidad_cuotas-1)*Decimal(cuota_capital)))
-                    fHasta = pd.to_datetime(row['Fecha de Suscripción'],format ='%Y-%m-%d')
+                    ult_cuota_capital = cuota_capital if int(row['Capital_total']) - (cantidad_cuotas*cuota_capital) == 0 else str(int(row['Capital_total']) - (Decimal(cantidad_cuotas-1)*Decimal(cuota_capital)))
+                    fHasta = pd.to_datetime(row['Fecha_de_suscripcion'],format ='%Y-%m-%d')
                     for i in range(cantidad_cuotas-1):
-                        meses = int(row['Tipo Plan de Pagos'])
+                        meses = int(row['Tipo_plan_pagos'])
                         fHasta = fHasta + relativedelta(months=meses)
                         cuotas = {
                                         "registro": str(i+1),
@@ -301,7 +332,7 @@ if xls_file:
                                         "periodicidadIntereses": "PE",
                                         "periodicidadCapital": "" if tipo_plan == 1 else "PE",
                                         "tasaBaseBeneficiario": "5",
-                                        "margenTasaBeneficiario": str(row['Puntos IBR']),
+                                        "margenTasaBeneficiario": str(row['Puntos_IBR']),
                                         "valorCuotaCapital": "0" if tipo_plan == 1 else str(cuota_capital),
                                         "porcentajeCapitalizacionIntereses": "0.0",
                                         "margenTasaRedescuento": "0"
@@ -315,8 +346,8 @@ if xls_file:
                                 "periodicidadIntereses": "PE",
                                 "periodicidadCapital": "PE",
                                 "tasaBaseBeneficiario": "5",
-                                "margenTasaBeneficiario":  str(row['Puntos IBR']),
-                                "valorCuotaCapital": str(row['Capital Total']) if tipo_plan == 1 else str(ult_cuota_capital),
+                                "margenTasaBeneficiario":  str(row['Puntos_IBR']),
+                                "valorCuotaCapital": str(row['Capital_total']) if tipo_plan == 1 else str(ult_cuota_capital),
                                 "porcentajeCapitalizacionIntereses": "0.0",
                                 "margenTasaRedescuento": "0"
                             }
