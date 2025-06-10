@@ -137,6 +137,7 @@ if xls_file:
         df['Fecha_de_activos'] = df['Fecha_de_activos'].dt.strftime('%Y-%m-%d')
         df['Fecha_de_suscripcion'] = df['Fecha_de_suscripcion'].dt.strftime('%Y-%m-%d')
         df['Identificacion_del_primer_beneficiario'] = df['Identificacion_del_primer_beneficiario'].astype('str')
+        df['Tipo_de_Identificacion'] = df['Tipo_de_Identificacion'].astype('str')
         Valor_creditos = str(sum(df['Capital_total'].astype('float64')))
         Cantidad_creditos = str(len(df))
 
