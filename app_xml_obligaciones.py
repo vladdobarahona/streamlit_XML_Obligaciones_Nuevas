@@ -63,6 +63,8 @@ st.download_button(
     icon=":material/download:"
 )
 
+st.markdown("<br><br>", unsafe_allow_html=True)
+
 # Columnas predeterminadas para el archivo Excel
 required_columns = [
 'Tipo_de_cartera', 'Codigo_intermediario','Codigo_de_programa',
