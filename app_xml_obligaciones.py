@@ -15,9 +15,8 @@ import pandas as pd
 from decimal import Decimal
 import tempfile
 import openpyxl
-#background-color: rgb(255, 255, 255);
-#background-color: rgb(171 , 190 , 76)
-#background-color: rgb(120, 154, 61);
+from io import BytesIO
+
 # Fondo personalizado y fuente
 st.markdown("""
 <style>
@@ -41,6 +40,28 @@ with col2:
         '<h1 style="color: rgb(120,154,61); font-size: 2.25rem; font-weight: bold;">Convertidor de archivo Excel a XML Obligaciones</h1>',
         unsafe_allow_html=True
     )
+
+# Cargar el archivo Excel desde el archivo local
+df = pd.read_excel("excel_xml.xlsx", sheet_name='REGISTRO', engine="openpyxl", dtype=str)
+
+# Convertir el DataFrame a un archivo Excel en memoria
+def to_excel(df):
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name='Novedades')
+    output.seek(0)
+    return output
+
+excel_file = to_excel(df)
+
+# Botón de descarga directo
+st.download_button(
+    label="Descargar plantilla Excel",
+    data=excel_file,
+    file_name="excel_obligaciones_xml.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    icon=":material/download:"
+)
 
 # Columnas predeterminadas para el archivo Excel
 required_columns = [
