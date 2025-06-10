@@ -178,6 +178,31 @@ if xls_file:
                 #tipo_plan = 0 # solo va 1 o cero | # si tipo_plan = 1 entonces bullet sino cuotas capital simétricas
                 #st.write(f"Tipo plan: {tipo_plan}")
                 st.dataframe(df)
+                def calcular_dv_nit(nit):
+                    # Pesos fijos definidos por la DIAN
+                    pesos = [71, 67, 59, 53, 47, 43, 41, 37, 29, 23, 19, 17, 13, 7, 3]
+                    
+                    # Convertir el NIT a una lista de dígitos
+                    nit_digitos = [int(d) for d in str(nit)]
+                    
+                    # Validar que el NIT no tenga más dígitos que los pesos disponibles
+                    if len(nit_digitos) != 9:
+                        raise ValueError("El NIT tiene más dígitos que los nueve (9) permitidos.")
+                    
+                    # Calcular la suma de las multiplicaciones de los dígitos por sus pesos correspondientes
+                    suma = sum(d * p for d, p in zip(reversed(nit_digitos), reversed(pesos)))
+                    
+                    # Calcular el residuo de la suma dividida por 11
+                    residuo = suma % 11
+                    
+                    # Aplicar la regla final para obtener el DV
+                    if residuo in [0, 1]:
+                        dv = residuo
+                    else:
+                        dv = 11 - residuo
+                    
+                    return dv
+                    
                 for index, row in df.iterrows():
                     # Crear vencimiento final
                     fechaFinal = pd.to_datetime(row['Fecha_de_suscripcion'],format ='%Y-%m-%d') + relativedelta(months=int(row['Plazo'])) 
@@ -201,6 +226,7 @@ if xls_file:
                                                    codigo=str(row['Codigo_intermediario']))
                 
                     # Crear el elemento 'beneficiarios'
+                        # Crear el elemento 'beneficiarios'
                     beneficiarios = ET.SubElement(obligacion, "{http://www.finagro.com.co/sit}beneficiarios",
                                                    cantidad="1")
                 
@@ -208,27 +234,52 @@ if xls_file:
                     beneficiario = ET.SubElement(beneficiarios, "{http://www.finagro.com.co/sit}beneficiario",
                                                  correoElectronico=str(row['Email_Beneficiario']),
                                                  tipoAgrupacion="1",
-                                                 tipoPersona="1",
+                                                 tipoPersona="2" if row['Tipo_de_Identificacion'] =="1" else "1",
                                                  tipoProductor=str(row['Tipo_de_productor']),
                                                  actividadEconomica=str(row['Producto_relacionado']),
                                                  cumpleCondicionesProductorAgrupacion="true")
                 
                     # Crear el elemento 'identificacion' dentro de 'beneficiario'
-                    identificacion_beneficiario = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}identificacion",
-                                                                tipo=str(row['Tipo_de_Identificacion']),
-                                                                numeroIdentificacion=str(row['Identificacion_del_primer_beneficiario']))
-
+                    if (len(row['Identificacion_del_primer_beneficiario']))==9 & (row['Tipo_de_Identificacion'] =="1"):
+                        dv = calcular_dv_nit(row['Identificacion_del_primer_beneficiario'])
+                        Identificacion_del_primer_beneficiario = row['Identificacion_del_primer_beneficiario']
+                    elif (len(row['Identificacion_del_primer_beneficiario'])==10) & (row['Tipo_de_Identificacion'] =="1"):
+                        dv = row['Identificacion_del_primer_beneficiario'][-1]
+                        Identificacion_del_primer_beneficiario = row['Identificacion_del_primer_beneficiario'][:8] 
+                    else:
+                        dv = ""
+                        Identificacion_del_primer_beneficiario = row['Identificacion_del_primer_beneficiario']
                     
-                    # Crear el elemento 'nombre' dentro de 'beneficiario'
+                    if row['Tipo_de_Identificacion'] =="1":
+                        identificacion_beneficiario = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}identificacion",
+                                                                tipo=str(row['Tipo_de_Identificacion']),
+                                                                numeroIdentificacion=str(Identificacion_del_primer_beneficiario),
+                                                                digitoVerificacion= str(dv)
+                                                                )
+                        
+                    else:
+                        identificacion_beneficiario = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}identificacion",
+                                                                tipo=str(row['Tipo_de_Identificacion']),
+                                                                numeroIdentificacion=str(Identificacion_del_primer_beneficiario)
+                                                                
+                                                                )
+                        
+                    # Crear el elemento 'nombre_beneficiario' dentro de 'beneficiario'
                     #calcular por espacios
-                    nombre_beneficiario = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}nombre",
+                    if row['Tipo_de_Identificacion'] =="1":
+                        nombre_beneficiario = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}nombre",
+                                                       Razonsocial=row['Nombre_del_beneficiario_o_razon_social']
+                                                       
+                                                       )
+                    else:
+                        nombre_beneficiario = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}nombre",
                                                        primerNombre=row['Nombre_del_beneficiario_o_razon_social'],
                                                        segundoNombre="",
                                                        primerApellido="",
                                                        segundoApellido="",
-                                                       Razonsocial="")
+                                                       )
                 
-                    # Crear el elemento 'nombre' dentro de 'beneficiario'
+                    # Crear el elemento 'direccionCorrespondencia' dentro de 'beneficiario'
                     direccionCorrespondencia = ET.SubElement(beneficiario, "{http://www.finagro.com.co/sit}direccionCorrespondencia",
                                                     direccion="R|"+str(row['Direccion_Beneficiario']),
                                                     municipio=str(row['Ciudad_de_Inversion']))
@@ -376,7 +427,8 @@ if xls_file:
                 
                     # Iterar sobre los datos de las cuotas y crear un elemento 'registroCuota' para cada uno
                     for dato_cuota in datos_cuotas:
-                        registro_cuota = ET.SubElement(plan_pagos, "{http://www.finagro.com.co/sit}registroCuota",
+                        if row['Tipo_de_cartera'] =="1":
+                            registro_cuota = ET.SubElement(plan_pagos, "{http://www.finagro.com.co/sit}registroCuota",
                                                        registro=str(dato_cuota["registro"]),
                                                        fechaAplicacionHasta=str(dato_cuota["fechaAplicacionHasta"]),
                                                        conceptoRegistroCuota=dato_cuota["conceptoRegistroCuota"],
@@ -386,7 +438,21 @@ if xls_file:
                                                        margenTasaBeneficiario=dato_cuota["margenTasaBeneficiario"],
                                                        valorCuotaCapital=dato_cuota.get("valorCuotaCapital"),  # Usamos .get() por si es opcional
                                                        porcentajeCapitalizacionIntereses=dato_cuota.get("porcentajeCapitalizacionIntereses"),
-                                                       margenTasaRedescuento=dato_cuota.get("margenTasaRedescuento"),
+                                                       margenTasaRedescuento=dato_cuota.get("margenTasaRedescuento")
+                                                       
+                                                      )
+                        else:
+                            registro_cuota = ET.SubElement(plan_pagos, "{http://www.finagro.com.co/sit}registroCuota",
+                                                       registro=str(dato_cuota["registro"]),
+                                                       fechaAplicacionHasta=str(dato_cuota["fechaAplicacionHasta"]),
+                                                       conceptoRegistroCuota=dato_cuota["conceptoRegistroCuota"],
+                                                       periodicidadIntereses=dato_cuota["periodicidadIntereses"],
+                                                       periodicidadCapital=dato_cuota["periodicidadCapital"],
+                                                       tasaBaseBeneficiario=dato_cuota["tasaBaseBeneficiario"],
+                                                       margenTasaBeneficiario=dato_cuota["margenTasaBeneficiario"],
+                                                       valorCuotaCapital=dato_cuota.get("valorCuotaCapital"),  # Usamos .get() por si es opcional
+                                                       porcentajeCapitalizacionIntereses=dato_cuota.get("porcentajeCapitalizacionIntereses"),
+                                                       
                                                       )
                     
                 
