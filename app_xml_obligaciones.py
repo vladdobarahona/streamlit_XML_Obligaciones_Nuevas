@@ -114,7 +114,7 @@ st.markdown(
     '<span style="color: rgb(120, 154, 61); font-size: 22px;">Validador de Columnas Requeridas</span>',
     unsafe_allow_html=True
 )
-xls_file = st.file_uploader("", type=["xlsx", "xls"])
+xls_file = st.file_uploader("", type=["xlsx", "xls"], help="Límite 200MB por archivo • Formatos permitidos: XLSX, XLS")
 
 if xls_file:
     df = pd.read_excel(xls_file, engine='openpyxl')
