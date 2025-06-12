@@ -138,7 +138,19 @@ if xls_file:
         df['Fecha_de_suscripcion'] = df['Fecha_de_suscripcion'].dt.strftime('%Y-%m-%d')
         df['Identificacion_del_primer_beneficiario'] = df['Identificacion_del_primer_beneficiario'].astype('str')
         df['Tipo_de_Identificacion'] = df['Tipo_de_Identificacion'].astype('str')
-        df['Tipo_de_cartera']  = df['Tipo_de_cartera'].astype('str') 
+        df['Tipo_de_cartera']  = df['Tipo_de_cartera'].astype('str')
+        # Lista de columnas a procesar
+        columnas = [
+            'Tipo_Comision',
+            'Valor_a_Financiar_destino_2',
+            'Valor_a_Financiar_destino_3',
+            'Valor_a_Financiar_destino_4'
+        ]
+        
+        # Conversión a tipo String y limpieza ".0" 
+        for col in columnas:
+            df[col] = df[col].astype(str).str.replace('.0', '', regex=False)
+
         Valor_creditos = str(sum(df['Capital_total'].astype('float64')))
         Cantidad_creditos = str(len(df))
 
