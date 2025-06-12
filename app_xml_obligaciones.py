@@ -154,7 +154,10 @@ if xls_file:
         # Conversión a tipo String y limpieza ".0" 
         for col in columnas:
             df[col] = df[col].astype(str).str.replace('.0', '', regex=False)
-
+        # to check for missing or invalid values
+        def is_valid(value):
+            return not (pd.isna(value) or str(value).strip().lower() == 'nan' or str(value).strip() == '')
+            
         Valor_creditos = str(sum(df['Capital_total'].astype('float64')))
         Cantidad_creditos = str(len(df))
 
@@ -250,7 +253,7 @@ if xls_file:
                 
                     # Crear el elemento 'beneficiario'
                     beneficiario = ET.SubElement(beneficiarios, "{http://www.finagro.com.co/sit}beneficiario",
-                                                 correoElectronico=str(row['Email_Beneficiario']),
+                                                 correoElectronico=str(row['Email_Beneficiario']) if is_valid(row['Email_Beneficiario']) else "",
                                                  tipoAgrupacion="1",
                                                  tipoPersona="2" if row['Tipo_de_Identificacion'] =="1" else "1",
                                                  tipoProductor=str(row['Tipo_de_productor']),
@@ -358,7 +361,7 @@ if xls_file:
                     valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar", {"xmlns": ""})
                     valor_a_financiar.text=str(row['Valor_a_Financiar_destino_1'])
                     
-                    if not row['Codigo_destino_2']!= row['Codigo_destino_2']: 
+                    if  is_valid(row['Codigo_destino_2']): 
                         # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
                         destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
                                                         codigo=str(row['Codigo_destino_2']),
@@ -370,7 +373,7 @@ if xls_file:
                         valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar", {"xmlns": ""})
                         valor_a_financiar.text=str(row['Valor_a_Financiar_destino_2'])
                     
-                    if not row['Codigo_destino_3']!= row['Codigo_destino_3']: 
+                    if  is_valid(row['Codigo_destino_3']): 
                         # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
                         destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
                                                         codigo=str(row['Codigo_destino_3']),
@@ -382,7 +385,7 @@ if xls_file:
                         valor_a_financiar = ET.SubElement(destino_credito_valor, "{http://www.finagro.com.co/sit}valorAFinanciar", {"xmlns": ""})
                         valor_a_financiar.text=str(row['Valor_a_Financiar_destino_3'])
                     
-                    if not row['Codigo_destino_4']!= row['Codigo_destino_3']: 
+                    if  is_valid(row['Codigo_destino_4']): 
                         # Crear un elemento 'destinoCredito' dentro de 'destinosCredito'
                         destino_credito = ET.SubElement(destinos_credito, "{http://www.finagro.com.co/sit}destinoCredito",
                                                         codigo=str(row['Codigo_destino_4']),
