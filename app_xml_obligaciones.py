@@ -142,6 +142,10 @@ if xls_file:
         # Lista de columnas a procesar
         columnas = [
             'Tipo_Comision',
+            'Codigo_destino_1',
+            'Codigo_destino_2',
+            'Codigo_destino_3',
+            'Codigo_destino_4',
             'Valor_a_Financiar_destino_2',
             'Valor_a_Financiar_destino_3',
             'Valor_a_Financiar_destino_4'
