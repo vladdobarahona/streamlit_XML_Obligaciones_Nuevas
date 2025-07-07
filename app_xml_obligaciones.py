@@ -48,7 +48,7 @@ df = pd.read_excel("excel_xml.xlsx", sheet_name='REGISTRO', engine="openpyxl", d
 def to_excel(df):
     output = BytesIO()
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        df.to_excel(writer, index=False, sheet_name='Novedades')
+        df.to_excel(writer, index=False, sheet_name='REGISTRO')
     output.seek(0)
     return output
 
