@@ -148,7 +148,12 @@ if xls_file:
             'Codigo_destino_4',
             'Valor_a_Financiar_destino_2',
             'Valor_a_Financiar_destino_3',
-            'Valor_a_Financiar_destino_4'
+            'Valor_a_Financiar_destino_4',
+            'Codigo_intermediario',
+            'Codigo_de_programa',
+            'Tipo_de_productor',
+            'Codigo_oficina_de_origen',
+            'Producto_relacionado'
         ]
         
         # Conversión a tipo String y limpieza ".0" 
@@ -234,7 +239,7 @@ if xls_file:
                                                programaCredito = str(row['Codigo_de_programa']),
                                                tipoOperacion="1",
                                                tipoMoneda="1",
-                                               tipoAgrupamiento="1",
+                                               tipoAgrupamiento="",
                                                numeroPagare= row['Numero_del_pagare'],
                                                numeroObligacionIntermediario= str(time.time_ns()),
                                                fechaSuscripcion=str(row['Fecha_de_suscripcion'] ),
@@ -254,7 +259,7 @@ if xls_file:
                     # Crear el elemento 'beneficiario'
                     beneficiario = ET.SubElement(beneficiarios, "{http://www.finagro.com.co/sit}beneficiario",
                                                  correoElectronico=str(row['Email_Beneficiario']) if is_valid(row['Email_Beneficiario']) else "",
-                                                 tipoAgrupacion="1",
+                                                 tipoAgrupacion="",
                                                  tipoPersona="2" if row['Tipo_de_Identificacion'] =="1" else "1",
                                                  tipoProductor=str(row['Tipo_de_productor']),
                                                  actividadEconomica=str(row['Producto_relacionado']),
@@ -499,3 +504,4 @@ if xls_file:
                                 st.download_button("📥 Descargar XML de Obligaciones nuevas", f, file_name="Obligaciones.xml", mime="application/xml")
             except Exception as e:
                 st.error(f"Ocurrió un error al generar el XML: {e}")
+
