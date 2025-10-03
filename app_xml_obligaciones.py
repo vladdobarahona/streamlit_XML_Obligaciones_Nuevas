@@ -231,7 +231,7 @@ if xls_file:
                     
                 for index, row in df.iterrows():
                     # Crear vencimiento final
-                    fechaFinal = pd.to_datetime(row['Fecha_de_suscripcion'],format ='%Y-%m-%d') + relativedelta(months=int(row['Plazo'])) 
+                    fechaFinal = pd.to_datetime(fecha_Desembolso) + relativedelta(months=int(row['Plazo'])) 
                     fechaFinal = fechaFinal.strftime('%Y-%m-%d')
                     # Crear el elemento 'obligacion'
                     obligacion = ET.SubElement(obligaciones, "{http://www.finagro.com.co/sit}obligacion",
@@ -504,4 +504,5 @@ if xls_file:
                                 st.download_button("📥 Descargar XML de Obligaciones nuevas", f, file_name="Obligaciones.xml", mime="application/xml")
             except Exception as e:
                 st.error(f"Ocurrió un error al generar el XML: {e}")
+
 
